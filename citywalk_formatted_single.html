@@ -1,0 +1,2955 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>徐汇区Citywalk开放探索数字孪生导览系统</title>
+    <script>
+      window.CESIUM_BASE_URL = "./Build/Cesium/";
+    </script>
+    <script src="./Build/Cesium/Cesium.js"></script>
+    <script src="./Data/Plug-in/cesium-navigation/cesium-navigation/viewerCesiumNavigationMixin.min.js"></script>
+    <script src="./Data/Plug-in/echarts-6.0.0/echarts-6.0.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="./Build/Cesium/Widgets/widgets.css" />
+    <style>
+      html,
+      body,
+      #map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        background: #06101c;
+        color: #e5edf8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .cesium-widget-credits,
+      #credit {
+        display: none !important;
+      }
+
+      .panel {
+        position: absolute;
+        z-index: 10;
+        background:
+          linear-gradient(180deg, rgba(6, 10, 22, 0.85), rgba(5, 12, 28, 0.88)),
+          url("./Data/smart-tourism/panel_dialog_v2.png") center/100% 100% no-repeat;
+        border: 1px solid rgba(56, 189, 248, 0.32);
+        border-radius: 8px;
+        box-shadow:
+          0 14px 42px rgba(0, 0, 0, 0.45),
+          inset 0 0 24px rgba(14, 165, 233, 0.12);
+        backdrop-filter: blur(15px);
+      }
+
+      .top {
+        top: 12px;
+        left: 14px;
+        right: 14px;
+        min-height: 54px;
+        display: grid;
+        grid-template-columns: 1.1fr auto auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 16px;
+        background:
+          linear-gradient(90deg, rgba(5, 10, 24, 0.92), rgba(8, 20, 42, 0.78)),
+          url("./Data/smart-tourism/panel_top_v2.png") center/100% 100% no-repeat;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        color: #f8fafc;
+        font-weight: 700;
+      }
+
+      h1 {
+        font-size: 18px;
+        letter-spacing: 1px;
+      }
+
+      h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+        padding-left: 18px;
+        background: url("./Data/smart-tourism/title_mark.png") left center/10px 10px no-repeat;
+        color: #bae6fd;
+      }
+
+      h3 {
+        font-size: 13px;
+        margin: 10px 0 8px;
+      }
+
+      p {
+        margin: 6px 0;
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      button,
+      input {
+        height: 32px;
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        border-radius: 6px;
+        padding: 0 12px;
+        background: rgba(15, 23, 42, 0.82);
+        color: #f1f5f9;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.2s;
+        outline: none;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:hover,
+      input:focus,
+      .tab.active {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
+        background: rgba(30, 41, 59, 0.9);
+      }
+
+      .row,
+      .tabs,
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .voice {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
+
+      .voice input {
+        width: 260px;
+        font-weight: 400;
+      }
+
+      .left,
+      .right {
+        top: 86px;
+        bottom: 100px;
+        width: 340px;
+        padding: 16px 14px;
+        overflow: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(56, 189, 248, 0.3) transparent;
+      }
+
+      .left {
+        left: 14px;
+      }
+
+      .right {
+        right: 14px;
+      }
+
+      .bottom {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        min-height: 72px;
+        padding: 12px 20px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 20px;
+        align-items: center;
+        background:
+          linear-gradient(90deg, rgba(5, 10, 24, 0.92), rgba(8, 20, 42, 0.85)),
+          url("./Data/smart-tourism/panel_bottom_v2.png") center/100% 100% no-repeat;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .bottom .left-group,
+      .bottom .right-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .bottom .right-group {
+        justify-content: flex-end;
+      }
+
+      .coords-display {
+        font-family: monospace;
+        font-size: 11px;
+        color: #38bdf8;
+        background: rgba(15, 23, 42, 0.6);
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid rgba(56, 189, 248, 0.15);
+      }
+
+      .view-presets {
+        display: flex;
+        gap: 6px;
+      }
+
+      .view-presets button {
+        padding: 0 10px;
+        min-width: 70px;
+        background: rgba(56, 189, 248, 0.12);
+        border-color: rgba(56, 189, 248, 0.3);
+      }
+
+      .bottom .center-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      #status {
+        margin: 0;
+        font-size: 11px;
+        color: #94a3b8;
+        max-width: 400px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .section,
+      .card {
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 10px;
+        background:
+          linear-gradient(180deg, rgba(15, 23, 42, 0.65), rgba(8, 18, 36, 0.58)),
+          url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat;
+        padding: 14px 12px;
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.2),
+          inset 0 0 16px rgba(14, 165, 233, 0.08);
+        margin-bottom: 12px;
+      }
+
+      .info {
+        min-height: 58px;
+        color: #e0f2fe;
+        background:
+          linear-gradient(180deg, rgba(14, 165, 233, 0.18), rgba(15, 23, 42, 0.48)),
+          url("./Data/smart-tourism/panel_item_v2.png") center/100% 100% no-repeat;
+        padding: 12px;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .tag {
+        display: inline-block;
+        margin: 3px 4px 0 0;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(14, 165, 233, 0.18);
+        color: #bae6fd;
+        font-size: 11px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .mini {
+        font-size: 11px;
+        color: #94a3b8;
+      }
+
+      .hide {
+        display: none !important;
+      }
+
+      .mapTools {
+        position: absolute;
+        z-index: 12;
+        left: 370px;
+        bottom: 92px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .tool {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 16px;
+      }
+
+      .timeBtn,
+      .tool.iconTool {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .timeBtn img,
+      .tool.iconTool img {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+      }
+
+      .timeBtn {
+        min-width: 58px;
+      }
+
+      .drawer {
+        top: 86px;
+        right: 360px;
+        width: 300px;
+        max-height: calc(100vh - 180px);
+        padding: 12px;
+        display: none;
+      }
+
+      .drawer.open {
+        display: block;
+      }
+
+      .storyCard {
+        left: 50%;
+        bottom: 92px;
+        width: min(600px, calc(100vw - 800px));
+        transform: translateX(-50%);
+        padding: 16px;
+        display: none;
+        border-left: 4px solid #a855f7;
+        background:
+          linear-gradient(180deg, rgba(6, 10, 22, 0.8), rgba(5, 12, 28, 0.85)),
+          url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat;
+      }
+
+      .storyCard.open {
+        display: block;
+      }
+
+      .modal {
+        left: 50%;
+        top: 50%;
+        width: min(800px, calc(100vw - 60px));
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        display: none;
+        background:
+          linear-gradient(180deg, rgba(6, 10, 22, 0.82), rgba(5, 12, 28, 0.9)),
+          url("./Data/smart-tourism/modal_bg_v2.png") center/100% 100% no-repeat;
+        box-shadow:
+          0 0 50px rgba(0, 0, 0, 0.6),
+          0 0 20px rgba(56, 189, 248, 0.2);
+      }
+
+      .modal.open {
+        display: block;
+        z-index: 30;
+      }
+
+      .modal .media {
+        height: 380px;
+        border-radius: 10px;
+        background:
+          linear-gradient(135deg, #1e293b, #0f172a),
+          url("./Data/smart-tourism/scene_01.png") center/cover no-repeat;
+        display: grid;
+        place-items: center;
+        color: #dbeafe;
+        margin: 12px 0;
+        border: 1px solid rgba(56, 189, 248, 0.15);
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+      }
+
+      #chart {
+        height: 180px;
+      }
+
+      .buildingStats,
+      .tourismStats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin: 6px 0 8px;
+      }
+
+      .tourismStats {
+        margin-bottom: 10px;
+      }
+
+      .tourismStats span,
+      .buildingStats span {
+        display: block;
+        padding: 7px;
+        border: 1px solid rgba(56, 189, 248, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(15, 23, 42, 0.52), rgba(8, 18, 36, 0.42)),
+          url("./Data/smart-tourism/panel_stat_bg.png") center/100% 100% no-repeat;
+        font-size: 11px;
+        color: #cbd5e1;
+      }
+
+      .tourismStats span {
+        display: grid;
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 7px;
+        align-items: center;
+      }
+
+      .tourismStats img {
+        width: 26px;
+        height: 26px;
+      }
+
+      .tourismStats b,
+      .buildingStats b {
+        display: block;
+        color: #f8fafc;
+        font-size: 14px;
+        margin-top: 2px;
+      }
+
+      .tourismSignal {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr);
+        gap: 8px;
+        align-items: center;
+        margin: 8px 0 10px;
+        padding: 7px;
+        border-left: 3px solid #38bdf8;
+        background:
+          linear-gradient(90deg, rgba(14, 165, 233, 0.16), rgba(15, 23, 42, 0.34)),
+          url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;
+        font-size: 11px;
+        color: #cbd5e1;
+        line-height: 1.45;
+      }
+
+      .tourismSignal img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .buildingControls {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        margin: 8px 0;
+      }
+
+      .buildingControls select {
+        flex: 1;
+        height: 30px;
+        border-radius: 7px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 0 8px;
+      }
+
+      .modelList {
+        display: grid;
+        gap: 5px;
+        margin: 8px 0;
+      }
+
+      .modelList .item {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr) 56px;
+        gap: 8px;
+        align-items: center;
+        padding: 5px 6px;
+        border-radius: 6px;
+        background:
+          linear-gradient(90deg, rgba(15, 23, 42, 0.28), rgba(8, 18, 36, 0.18)),
+          url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;
+        font-size: 11px;
+        color: #cbd5e1;
+      }
+
+      .modelList .rankIcon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+      }
+
+      .modelList .rankText {
+        color: #38bdf8;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .modelList .track {
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.16);
+        overflow: hidden;
+      }
+
+      .modelList .fill {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: #38bdf8;
+      }
+
+      .modelList b {
+        color: #f8fafc;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .bar {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.2);
+        overflow: hidden;
+        margin-top: 5px;
+      }
+
+      .bar i {
+        display: block;
+        height: 100%;
+        background: #38bdf8;
+      }
+
+      #slider {
+        position: absolute;
+        z-index: 20;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        display: none;
+        width: 5px;
+        background: rgba(56, 189, 248, 0.76);
+        cursor: col-resize;
+        box-shadow: 0 0 18px rgba(56, 189, 248, 0.78);
+      }
+
+      /* 比例尺与罗盘样式 (避让底栏与侧板) */
+      .distance-legend {
+        position: absolute !important;
+        right: 360px !important;
+        bottom: 100px !important;
+        z-index: 999;
+      }
+
+      .compass {
+        position: absolute !important;
+        bottom: 180px !important;
+        right: 350px !important;
+        z-index: 999;
+      }
+
+      .navigation-controls {
+        position: absolute !important;
+        bottom: 260px !important;
+        right: 360px !important;
+        z-index: 999;
+      }
+
+      @media (max-width: 1120px) {
+        .top {
+          grid-template-columns: 1fr;
+        }
+
+        .left,
+        .right {
+          width: 300px;
+        }
+
+        .bottom {
+          left: 320px;
+          right: 320px;
+        }
+
+        .voice input {
+          width: 190px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="credit"></div>
+    <div id="slider"></div>
+    <header class="panel top">
+      <div>
+        <h1>徐汇区Citywalk开放探索数字孪生导览系统</h1>
+        <p id="sceneState">自由探索｜模型加载中｜当前范围：徐汇区全域，武康路为重点节点</p>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="setMode('explore')">自由探索</button
+        ><button class="tab" onclick="setMode('story')">游客故事</button>
+        <button class="tab" onclick="setMode('crowd')">人流分析</button>
+      </div>
+      <div class="voice">
+        <button onclick="mockVoice()">语音</button><input id="voice" value="哪里人少" /><button
+          class="primary"
+          onclick="runCommand()"
+        >
+          飞行</button
+        ><button onclick="resetSystem()">重置</button>
+      </div>
+    </header>
+    <aside class="panel left">
+      <div class="tabs">
+        <button class="tab active" onclick="leftTab('explore')">探索</button
+        ><button class="tab" onclick="leftTab('route')">路线</button>
+        <button class="tab" onclick="leftTab('story')">故事</button
+        ><button class="tab" onclick="leftTab('journal')">手账</button>
+      </div>
+      <section id="left-explore">
+        <div class="section">
+          <h2>探索总览</h2>
+          <p>今日推荐：巴金故居、老洋房街角、安静支路。</p>
+          <p>当前高热节点：主街入口、街角拍照点。</p>
+          <button class="primary" onclick="toggleXuhuiPOIs()" style="margin-top: 8px; width: 100%">
+            显示/隐藏 全域POI点位
+          </button>
+        </div>
+        <div class="section">
+          <h2>兴趣点分类</h2>
+          <div class="grid" id="filters"></div>
+        </div>
+        <div class="section">
+          <h2>当前节点</h2>
+          <div id="info" class="info">点击地图节点、建筑或路线查看说明。</div>
+        </div>
+        <div class="section">
+          <h2>打卡推荐地</h2>
+          <div
+            class="info"
+            style="
+              min-height: auto;
+              background:
+                linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(15, 23, 42, 0.45)),
+                url(&quot;./Data/smart-tourism/panel_word_right_bg.png&quot;) center/cover no-repeat;
+              border-color: rgba(168, 85, 247, 0.25);
+            "
+          >
+            <p class="mini" style="color: #d8b4fe">✨ 暂无实时推荐，等待后续功能实现。</p>
+          </div>
+        </div>
+      </section>
+      <section id="left-route" class="hide">
+        <div class="section">
+          <h2>路线与节点</h2>
+          <div class="grid" id="routeBtns"></div>
+        </div>
+        <div class="section">
+          <h2>路线节点列表</h2>
+          <div id="nodeList"></div>
+        </div>
+      </section>
+      <section id="left-story" class="hide">
+        <div class="section">
+          <h2>一封没有寄出的信</h2>
+          <p>故事不是默认强制流程，而是游客进入沉浸游览时触发的叙事层。</p>
+          <button class="primary" onclick="startStory()">播放下一段</button>
+        </div>
+      </section>
+      <section id="left-journal" class="hide">
+        <div class="section">
+          <h2>游客手账</h2>
+          <p id="journal">尚未生成。选择路线或节点后，可导出当前Citywalk摘要。</p>
+          <button onclick="makeJournal()">生成手账</button>
+        </div>
+      </section>
+    </aside>
+    <aside class="panel right">
+      <div class="tabs">
+        <button class="tab active" onclick="rightTab('crowd')">人流</button
+        ><button class="tab" onclick="rightTab('building')">建筑</button>
+        <button class="tab" onclick="rightTab('chart')">图表</button>
+      </div>
+      <section id="right-crowd">
+        <div class="section">
+          <h2>徐汇区片区人流热力</h2>
+          <div id="tourismStats" class="tourismStats"></div>
+          <div id="tourismSignal" class="tourismSignal">文旅态势读取中。</div>
+          <div id="crowdBars"></div>
+          <button onclick="toggleFeature('heat')">热力开关</button>
+        </div>
+      </section>
+      <section id="right-chart" class="hide">
+        <div class="section">
+          <h2>路线与人流联动</h2>
+          <div id="chart"></div>
+        </div>
+      </section>
+      <section id="right-building" class="hide">
+        <div class="section">
+          <h2>建筑与空间分析</h2>
+          <div id="buildingStatsInfo" class="buildingStats"></div>
+          <div class="buildingControls">
+            <select id="modelMetricSelect" onchange="handleBuildingMetricChange()">
+              <option value="none" selected>请选择分析模式</option>
+              <option value="function">按功能分类</option>
+              <option value="height">按高度分级</option>
+              <option value="age">按年代分级</option>
+              <option value="quality">按质量等级</option>
+              <option value="area">按面积分级</option></select
+            ><button onclick="toggleBuildingStyle()">刷新</button>
+          </div>
+          <div id="buildingCategoryList" class="modelList"></div>
+          <div id="buildingChart"></div>
+          <button onclick="nearbyAnalysis()">距离圈选</button>
+        </div>
+      </section>
+    </aside>
+    <section class="panel bottom">
+      <div class="left-group">
+        <div class="view-presets">
+          <button onclick="flyToPreset('wukang')">武康大楼</button>
+          <button onclick="flyToPreset('bajin')">巴金故居</button>
+          <button onclick="flyToPreset('xujiahui')">徐家汇中心</button>
+          <button onclick="flyToPreset('longhua')">龙华寺</button>
+        </div>
+      </div>
+      <div class="center-group">
+        <div class="tabs">
+          <button
+            onclick="toggleModelSelectMode()"
+            id="modelSelectBtn"
+            style="
+              background: rgba(34, 197, 94, 0.12);
+              border: 1px solid rgba(34, 197, 94, 0.35);
+              color: #4ade80;
+            "
+          >
+            📐 模型选择
+          </button>
+          <button class="timeBtn" onclick="setTimeSlot('morning')">
+            <img src="./Data/smart-tourism/time_morning.png" alt="" />上午
+          </button>
+          <button class="timeBtn" onclick="setTimeSlot('noon')">
+            <img src="./Data/smart-tourism/time_noon.png" alt="" />午间
+          </button>
+          <button class="timeBtn" onclick="setTimeSlot('afternoon')">
+            <img src="./Data/smart-tourism/time_afternoon.png" alt="" />下午
+          </button>
+          <button class="timeBtn" onclick="setTimeSlot('evening')">
+            <img src="./Data/smart-tourism/time_evening.png" alt="" />傍晚
+          </button>
+          <button class="timeBtn" onclick="setTimeSlot('night')">
+            <img src="./Data/smart-tourism/time_night.png" alt="" />夜间
+          </button>
+          <button onclick="replayTrack()">轨迹回放</button>
+        </div>
+        <p id="status">系统初始化中。</p>
+      </div>
+      <div class="right-group">
+        <div id="coords" class="coords-display">经度: -- 纬度: -- 高度: --</div>
+        <button onclick="startMeasure('distance')" title="测距">📏 测距</button>
+        <button onclick="startMeasure('area')" title="测面">📐 测面</button>
+      </div>
+    </section>
+    <div class="mapTools">
+      <button class="tool" title="定位" onclick="focusScene()">⌖</button
+      ><button class="tool" title="量测" onclick="startMeasure()">↔</button>
+      <button class="tool" title="绘制" onclick="startDraw('rect')">□</button
+      ><button class="tool" title="半径" onclick="startDraw('circle')">◎</button>
+      <button class="tool" title="卷帘" onclick="toggleFeature('split')">◫</button>
+      <button class="tool iconTool" title="夜游" onclick="toggleFeature('night')">
+        <img src="./Data/smart-tourism/time_night.png" alt="" /></button
+      ><button class="tool iconTool" title="视频" onclick="openMedia('video')">
+        <img src="./Data/smart-tourism/icon_data.png" alt="" />
+      </button>
+      <button class="tool iconTool" title="全景" onclick="openMedia('pano')">
+        <img src="./Data/smart-tourism/icon_stations.png" alt="" />
+      </button>
+      <button class="tool iconTool" title="汇报" onclick="exportReport()">
+        <img src="./Data/smart-tourism/icon_warning.png" alt="" />
+      </button>
+      <button class="tool" title="清除" onclick="clearTemp()">×</button>
+      <button
+        class="tool"
+        title="裁剪区"
+        onclick="startClipPolygon()"
+        style="
+          background: rgba(239, 68, 68, 0.16);
+          border-color: rgba(239, 68, 68, 0.45);
+          color: #f87171;
+        "
+      >
+        ▣
+      </button>
+    </div>
+    <aside id="drawer" class="panel drawer">
+      <h2>图层管理</h2>
+      <div id="layerBtns" class="grid"></div>
+      <p class="mini">浏览时纹理建筑优先；建筑面板默认统计全部模型。</p>
+    </aside>
+    <section id="storyCard" class="panel storyCard">
+      <h2 id="storyTitle">故事导览</h2>
+      <p id="storyText">故事模式未开启。</p>
+    </section>
+    <section id="modal" class="panel modal">
+      <h2 id="modalTitle">沉浸查看</h2>
+      <div class="media" id="modalMedia">历史照片/全景/视频占位</div>
+      <p id="modalText"></p>
+      <button onclick="setPanelState('modal', false)">关闭</button>
+    </section>
+    <script>
+      const center = { lng: 121.4328, lat: 31.1605, height: 1050 };
+      const buildingHeightOffset = 3;
+      const colors = {
+        人文历史: "#c084fc",
+        商业消费: "#f59e0b",
+        交通出行: "#22d3ee",
+        公园绿地: "#34d399",
+        生活服务: "#818cf8",
+        教育办公: "#60a5fa",
+        拍照打卡: "#f472b6",
+        拥挤: "#ef4444",
+        舒适: "#60a5fa",
+        夜游: "#facc15",
+      };
+      const categoryMapping = {
+        C1: "人文历史",
+        C2: "人文历史",
+        C3: "人文历史",
+        C4: "人文历史",
+        C5: "人文历史",
+        B1: "商业消费",
+        B2: "商业消费",
+        B3: "商业消费",
+        B4: "商业消费",
+        B5: "商业消费",
+        T1: "交通出行",
+        T2: "交通出行",
+        T3: "交通出行",
+        T4: "交通出行",
+        T5: "交通出行",
+        P1: "公园绿地",
+        P2: "公园绿地",
+        P3: "公园绿地",
+        P4: "公园绿地",
+        L1: "生活服务",
+        L2: "生活服务",
+        L3: "生活服务",
+        M1: "生活服务",
+        M2: "生活服务",
+        H1: "生活服务",
+        E1: "教育办公",
+        E2: "教育办公",
+        E3: "教育办公",
+        O1: "教育办公",
+        O2: "教育办公",
+        文化: "人文历史",
+        历史建筑: "人文历史",
+        休憩: "公园绿地",
+        拍照: "拍照打卡",
+        商业: "商业消费",
+      };
+
+      function getUnifiedCategory(cat) {
+        if (!cat) return "生活服务";
+        const code = cat.split("-")[0];
+        return categoryMapping[code] || categoryMapping[cat] || "生活服务";
+      }
+
+      const nodes = [];
+      const routes = {
+        historic: {
+          name: "故居漫游线",
+          color: "#c084fc",
+          path: ["xuhui_poi_1", "xuhui_poi_4", "xuhui_poi_5"],
+          value: 45,
+        },
+        shopping: {
+          name: "商业生活线",
+          color: "#f59e0b",
+          path: ["xuhui_poi_10", "xuhui_poi_20", "xuhui_poi_30"],
+          value: 38,
+        },
+      };
+
+      let crowd = [
+        [
+          "主街入口",
+          121.4385,
+          31.2117,
+          90,
+          { category: "主入口", radius: 70, count: 7600, kind: "region" },
+        ],
+        [
+          "街角拍照点",
+          121.4394,
+          31.2122,
+          78,
+          { category: "拍照打卡", radius: 82, count: 4300, kind: "point" },
+        ],
+        [
+          "支路休憩点",
+          121.4377,
+          31.2111,
+          28,
+          { category: "低密停留", radius: 52, count: 1200, kind: "point" },
+        ],
+        [
+          "文学节点",
+          121.435984,
+          31.210537,
+          46,
+          { category: "历史文化", radius: 68, count: 2200, kind: "point" },
+        ],
+      ];
+      let crowdRegions = [],
+        crowdPoints = [],
+        crowdDataset = null,
+        currentCrowdSlot = "evening";
+      const layerDefs = [
+        [
+          "buildings",
+          "徐汇区建筑",
+          "./Data/OSGB/%E5%BE%90%E6%B1%87%E5%8C%BA%E5%BB%BA%E7%AD%91/tileset.json",
+          null,
+          false,
+        ],
+        [
+          "whiteBuildings",
+          "补充模型",
+          "./Data/OSGB/%E7%99%BD%E8%86%9C%E5%BB%BA%E7%AD%912/tileset.json",
+          null,
+          false,
+        ],
+      ];
+      const contentLibrary = {
+        video: {
+          title: "节点影像",
+          text: "借鉴智慧文旅系统的媒体弹窗表达，用于展示节点影像、历史照片或课堂演示素材。",
+          media: "./Data/2.jpg",
+        },
+        pano: {
+          title: "街区全景",
+          text: "全景节点用于沉浸查看街角空间，可配合路线、人流和故事模式进行现场讲解。",
+          media: "./Data/quanjing.jpg",
+        },
+      };
+      let viewer,
+        baseLayer,
+        historyLayer,
+        charts = {},
+        routeEntities = [],
+        heatEntities = [],
+        tempEntities = [],
+        measurePts = [],
+        drawMode = "",
+        splitOpen = false,
+        analysisMode = false,
+        whiteMaskEnabled = false,
+        modelSelectMode = false,
+        currentRightTab = "crowd";
+      const whiteShift = { lat: -0.0022, lng: 0.0044, height: 0 };
+      let clipPolygonDegrees = null,
+        drawClipPoints = [],
+        drawClipMode = false,
+        activeFlash = null,
+        activeHighlight = null,
+        whiteDataFields = [],
+        whiteRecords = [],
+        whiteRecordsByUri = {},
+        whiteMetadataLoading = null,
+        textureModelRecordCache = {},
+        whiteStats = {
+          count: 0,
+          avgHeight: 0,
+          avgFloor: 0,
+          avgArea: 0,
+          funcMix: {},
+          ageMix: {},
+          qualityMix: {},
+          realCount: 0,
+        };
+      const defaultClipDegrees = [
+        121.396579, 31.178799, 121.394316, 31.176865, 121.388198, 31.172891, 121.39427, 31.159139,
+        121.394952, 31.151778, 121.405409, 31.153978, 121.409753, 31.146774, 121.412746, 31.140378,
+        121.414643, 31.139414, 121.414865, 31.135534, 121.421494, 31.126566, 121.42569, 31.121283,
+        121.427548, 31.120609, 121.436131, 31.121619, 121.435532, 31.113384, 121.439137, 31.110986,
+        121.441039, 31.109729, 121.441391, 31.108779, 121.441372, 31.106756, 121.442477, 31.10525,
+        121.452247, 31.096969, 121.46099, 31.099087, 121.464491, 31.113551, 121.470112, 31.120234,
+        121.466069, 31.134469, 121.457179, 31.143583, 121.461613, 31.150086, 121.470186, 31.160579,
+        121.465766, 31.174767, 121.466661, 31.181504, 121.4757, 31.189748, 121.469337, 31.206175,
+        121.463238, 31.207152, 121.458237, 31.222974, 121.430875, 31.208953, 121.439667, 31.199547,
+        121.435914, 31.197137, 121.428737, 31.19736, 121.425465, 31.201073, 121.417119, 31.196621,
+        121.417252, 31.190231, 121.412211, 31.185577, 121.399595, 31.180884, 121.397027, 31.179227,
+      ];
+      const loadedTilesets = {},
+        featureEntities = {};
+      const storyState = {
+        active: false,
+        index: 0,
+        steps: [
+          ["序章：收到一封旧信", "镜头进入武康路入口，系统从自由探索切换为故事导览。", "classic"],
+          ["第一站：文学记忆", "巴金故居被高亮，街区节点讲解同步更新。", "classic"],
+          ["第二站：旧影重现", "打开卷帘，比较现实卫星底图与矢量记忆层。", "building"],
+          ["第三站：避开拥挤", "主街热度偏高，系统推荐舒适支路。", "quiet"],
+        ],
+      };
+      const C = (hex) => Cesium.Color.fromCssColorString(hex);
+
+      init();
+
+      let xuhuiPOISource = null,
+        xuhuiBoundarySource = null;
+
+      async function initPOIs() {
+        xuhuiPOISource = new Cesium.CustomDataSource("unifiedPOIs");
+        viewer.dataSources.add(xuhuiPOISource);
+        const res = await fetch("./Data/xuhuiqu/xuhui_poi_fixed.geojson");
+        const features = (await res.json()).features || [];
+        features.forEach((f, i) => {
+          const props = f.properties, coords = f.geometry.coordinates;
+          const unifiedCat = getUnifiedCategory(props.category);
+          const color = colors[unifiedCat] || "#94a3b8";
+          xuhuiPOISource.entities.add({
+            id: `xuhui_poi_${i}`,
+            name: props.name,
+            position: Cesium.Cartesian3.fromDegrees(coords[0], coords[1], 1.5),
+            properties: Object.assign({}, props, { unifiedCat: unifiedCat }),
+            point: {
+              pixelSize: 10,
+              color: Cesium.Color.fromCssColorString(color),
+              outlineColor: Cesium.Color.WHITE,
+              outlineWidth: 2,
+              disableDepthTestDistance: 5000,
+              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 8000),
+            },
+            label: {
+              text: props.name,
+              font: "12px Microsoft YaHei",
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              pixelOffset: new Cesium.Cartesian2(0, -18),
+              disableDepthTestDistance: 2000,
+              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 1500),
+            },
+          });
+        });
+        status(`系统已就绪：已加载 ${features.length} 个点位。`);
+      }
+      function filterPOI(cat) {
+        if (!xuhuiPOISource) return;
+        let count = 0;
+        xuhuiPOISource.entities.values.forEach((e) => {
+          const itemCat = e.properties.unifiedCat ? e.properties.unifiedCat.getValue() : null;
+          const show = !cat || itemCat === cat;
+          e.show = show;
+          if (show) count++;
+        });
+        info(cat || "全部", `已筛选「${cat || "全部"}」类别，共显示 ${count} 个点位。`);
+      }
+
+      function toggleXuhuiPOIs() {
+        if (xuhuiPOISource) {
+          xuhuiPOISource.show = !xuhuiPOISource.show;
+          status(`全域POI已${xuhuiPOISource.show ? "显示" : "隐藏"}。`);
+        }
+      }
+
+      async function initXuhuiBoundary() {
+        xuhuiBoundarySource = await Cesium.KmlDataSource.load("./Data/KML/310104.kmz", {
+          camera: viewer.scene.camera,
+          canvas: viewer.scene.canvas,
+          clampToGround: true,
+        });
+        await viewer.dataSources.add(xuhuiBoundarySource);
+        xuhuiBoundarySource.entities.values.forEach((e) => {
+          if (e.polygon) {
+            e.polygon.material = C("#38bdf8").withAlpha(0.08);
+            e.polygon.outline = true;
+            e.polygon.outlineColor = C("#38bdf8").withAlpha(0.35);
+            e.polygon.height = 0;
+          }
+          if (e.polyline) {
+            e.polyline.material = C("#38bdf8").withAlpha(0.45);
+            e.polyline.width = 2;
+          }
+          if (e.label) e.label.show = false;
+          if (e.billboard) e.billboard.show = false;
+        });
+        status("徐汇区KMZ边界已淡色加载。");
+      }
+
+      async function init() {
+        console.log("Starting initialization...");
+        viewer = new Cesium.Viewer("map", {
+          animation: false,
+          timeline: false,
+          baseLayerPicker: false,
+          geocoder: false,
+          homeButton: false,
+          sceneModePicker: false,
+          navigationHelpButton: false,
+          fullscreenButton: false,
+          infoBox: false,
+          selectionIndicator: false,
+          creditContainer: "credit",
+          baseLayer: false,
+          imageryProvider: false,
+        });
+        const credit = viewer.cesiumWidget.creditContainer;
+        if (credit) credit.style.display = "none";
+        viewer.imageryLayers.removeAll();
+        baseLayer = viewer.imageryLayers.addImageryProvider(
+          new Cesium.UrlTemplateImageryProvider({
+            url: "https://webst04.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+            minimumLevel: 3,
+            maximumLevel: 18,
+          }),
+        );
+        historyLayer = viewer.imageryLayers.addImageryProvider(
+          new Cesium.UrlTemplateImageryProvider({
+            url: "https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}",
+            minimumLevel: 3,
+            maximumLevel: 18,
+          }),
+        );
+        historyLayer.show = false;
+        viewer.scene.globe.depthTestAgainstTerrain = false;
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {
+          enableCompass: true,
+          enableZoomControls: true,
+          enableDistanceLegend: true,
+          enableCompassOuterRing: true,
+        });
+        await loadCrowdData();
+        buildUI();
+        await initPOIs();
+        await initXuhuiBoundary();
+        bindPick();
+        bindDraw();
+        bindClipDraw();
+        bindSplit();
+        bindCoordsUpdate();
+        drawCharts();
+        focusScene();
+        status("系统已就绪。");
+        loadXuhuiLayers();
+      }
+
+      function buildUI() {
+        const elFilters = document.getElementById("filters");
+        if (elFilters) {
+          elFilters.innerHTML = [
+            "人文历史",
+            "商业消费",
+            "交通出行",
+            "公园绿地",
+            "生活服务",
+            "教育办公",
+          ]
+            .map((k) => `<button onclick="filterPOI('${k}')">${k}</button>`)
+            .join("");
+        }
+        const elRoutes = document.getElementById("routeBtns");
+        if (elRoutes) {
+          elRoutes.innerHTML = Object.entries(routes)
+            .map(([k, r]) => `<button onclick="showRoute('${k}')">${r.name}</button>`)
+            .join("");
+        }
+        const elNodeList = document.getElementById("nodeList");
+        if (elNodeList) {
+          elNodeList.innerHTML = "<p class='mini'>路线节点将自动匹配真实全域POI坐标。</p>";
+        }
+        const elLayerBtns = document.getElementById("layerBtns");
+        if (elLayerBtns) {
+          elLayerBtns.innerHTML = layerDefs
+            .map((l) => `<button onclick="toggleLayer('${l[0]}')">${l[1]}</button>`)
+            .join("");
+        }
+        renderCrowd();
+      }
+      async function loadCrowdData() {
+        const res = await fetch("./Data/citywalk_crowd_heat_xuhui_district.json", { cache: "no-store" });
+        crowdDataset = await res.json();
+        applyCrowdSlot(currentCrowdSlot);
+        syncDatasetNodes();
+      }
+      function applyCrowdSlot(slot) {
+        if (((currentCrowdSlot = slot), crowdDataset))
+          if (
+            ((crowdPoints = Array.isArray(crowdDataset.points) ? crowdDataset.points : []),
+            (crowdRegions = Array.isArray(crowdDataset.regions) ? crowdDataset.regions : []),
+            crowdRegions.length)
+          ) {
+            const maxCount = Math.max(
+              ...crowdRegions.map((r) => Number(r.slots?.[slot] ?? r.slots?.evening ?? 0)),
+              1,
+            );
+            crowd = crowdRegions.map((r) => {
+              const count = Number(r.slots?.[slot] ?? r.slots?.evening ?? 0),
+                intensity = Math.round((count / maxCount) * 100);
+              return [
+                r.name,
+                r.center.lng,
+                r.center.lat,
+                intensity,
+                {
+                  id: r.id,
+                  category: r.category,
+                  radius: r.radiusMeters || 720,
+                  count: count,
+                  basis: r.basis,
+                  kind: "region",
+                },
+              ];
+            });
+          } else
+            crowdPoints.length &&
+              (crowd = crowdPoints.map((p) => [
+                p.name,
+                p.lng,
+                p.lat,
+                Number(p.slots?.[slot] ?? p.slots?.evening ?? 50),
+                {
+                  id: p.id,
+                  category: p.category,
+                  radius: p.radius || 70,
+                  basis: p.basis,
+                  kind: "point",
+                },
+              ]));
+      }
+      function syncDatasetNodes() {}
+      async function loadXuhuiLayers() {
+        let ok = 0;
+        for (const l of layerDefs) ok += await loadTileset(l);
+        (setBuildingMode(),
+          loadedTilesets.buildings && viewer.zoomTo(loadedTilesets.buildings),
+          (document.getElementById("sceneState").textContent =
+            `浏览模式｜纹理建筑显示，模型选择关闭(${ok}/${layerDefs.length})`),
+          status(
+            "建筑图层已加载：浏览模式只显示纹理建筑；点击「模型选择」后才显示模型建筑并读取真实属性。",
+          ));
+      }
+      async function loadTileset([key, name, url, color, useBlend]) {
+        const tileset = await Cesium.Cesium3DTileset.fromUrl(url);
+        tileset.show = !1;
+        viewer.scene.primitives.add(tileset);
+        loadedTilesets[key] = tileset;
+        tileset.maximumScreenSpaceError = "whiteBuildings" === key ? 12 : 8;
+        if (tileset.readyPromise) {
+          await Promise.race([
+            tileset.readyPromise.catch(() => {}),
+            new Promise((resolve) => setTimeout(resolve, 3500)),
+          ]);
+        }
+        if ("buildings" === key) shiftTileset(tileset, 3);
+        if ("whiteBuildings" === key) {
+          shiftWhiteBuildings(tileset);
+          tileset.tileLoad.addEventListener(async (tile) => {
+            const content = tile.content;
+            if (!content || !content.featuresLength) return;
+            await loadWhiteStructuralMetadata();
+            const uri = content.url.split("/").pop(), fileRecords = whiteRecordsByUri[uri];
+            if (fileRecords) {
+              for (let i = 0; i < content.featuresLength; i++) {
+                const f = content.getFeature(i), record = fileRecords[i];
+                if (record) {
+                  if (void 0 !== record.Height) f.setProperty("Height", record.Height);
+                  if (void 0 !== record.function) f.setProperty("function", record.function);
+                  if (void 0 !== record.age) f.setProperty("age", record.age);
+                  if (void 0 !== record.shape_area) f.setProperty("shape_area", record.shape_area);
+                  if (void 0 !== record.quality) f.setProperty("quality", record.quality);
+                }
+              }
+            }
+          });
+          tileset.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE;
+          tileset.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" });
+          loadWhiteDataFields(tileset);
+          applyWhiteCoverageMask(!0);
+        }
+        tileset.show = "whiteBuildings" !== key;
+        return 1;
+      }
+      function shiftTileset(tileset, heightBoost) {
+        const bs = tileset.boundingSphere;
+        if (!bs || !bs.center) return;
+        const nativeCarto = Cesium.Cartographic.fromCartesian(bs.center),
+          target = Cesium.Cartesian3.fromDegrees(
+            center.lng,
+            center.lat,
+            nativeCarto.height + heightBoost,
+          );
+        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(
+          Cesium.Cartesian3.subtract(target, bs.center, new Cesium.Cartesian3()),
+        );
+      }
+      function applyWhiteCoverageMask(enable = !0) {
+        const white = loadedTilesets.whiteBuildings;
+        if (!white || !Cesium.ClippingPolygonCollection) return;
+        if (white.clippingPolygons) {
+          white.clippingPolygons.destroy();
+          white.clippingPolygons = null;
+        }
+        if (enable) {
+          const polygon = createTextureCoveragePolygon();
+          if (polygon) {
+            white.clippingPolygons = new Cesium.ClippingPolygonCollection({
+              polygons: [new Cesium.ClippingPolygon({ positions: polygon })],
+              enabled: !0,
+            });
+          }
+        }
+        whiteMaskEnabled = enable;
+      }
+      function sanitizeClipDegrees(degs) {
+        const pts = [];
+        for (let i = 0; i < degs.length - 1; i += 2) {
+          const lng = Number(degs[i]),
+            lat = Number(degs[i + 1]);
+          if (
+            Number.isFinite(lng) &&
+            Number.isFinite(lat) &&
+            lng > 120 &&
+            lng < 123 &&
+            lat > 30 &&
+            lat < 32
+          ) {
+            const last = pts[pts.length - 1];
+            (!last || Math.abs(last.lng - lng) > 1e-7 || Math.abs(last.lat - lat) > 1e-7) &&
+              pts.push({ lng: lng, lat: lat });
+          }
+        }
+        if (pts.length > 2) {
+          const first = pts[0],
+            last = pts[pts.length - 1];
+          Math.abs(first.lng - last.lng) < 1e-7 &&
+            Math.abs(first.lat - last.lat) < 1e-7 &&
+            pts.pop();
+        }
+        return pts;
+      }
+      function convexHullLngLat(points) {
+        if (points.length < 3) return points;
+        const pts = points
+            .slice()
+            .sort((a, b) => (a.lng === b.lng ? a.lat - b.lat : a.lng - b.lng)),
+          cross = (o, a, b) =>
+            (a.lng - o.lng) * (b.lat - o.lat) - (a.lat - o.lat) * (b.lng - o.lng),
+          lower = [];
+        for (const p of pts) {
+          for (
+            ;
+            lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0;
+          )
+            lower.pop();
+          lower.push(p);
+        }
+        const upper = [];
+        for (let i = pts.length - 1; i >= 0; i--) {
+          const p = pts[i];
+          for (
+            ;
+            upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0;
+          )
+            upper.pop();
+          upper.push(p);
+        }
+        return (lower.pop(), upper.pop(), lower.concat(upper));
+      }
+      function createTextureCoveragePolygon() {
+        const pts = sanitizeClipDegrees(
+          clipPolygonDegrees && clipPolygonDegrees.length >= 6
+            ? clipPolygonDegrees
+            : defaultClipDegrees,
+        );
+        if (pts.length < 3) return null;
+        const safePts = convexHullLngLat(pts);
+        return safePts.length < 3
+          ? null
+          : Cesium.Cartesian3.fromDegreesArray(safePts.flatMap((p) => [p.lng, p.lat]));
+      }
+      function shiftWhiteBuildings(tileset) {
+        const dLat = whiteShift.lat,
+          dLng = whiteShift.lng,
+          dH = whiteShift.height,
+          bs = tileset.boundingSphere;
+        if (!bs || !bs.center) return;
+        const carto = Cesium.Cartographic.fromCartesian(bs.center),
+          target = Cesium.Cartesian3.fromDegrees(
+            Cesium.Math.toDegrees(carto.longitude) + dLng,
+            Cesium.Math.toDegrees(carto.latitude) + dLat,
+            carto.height + dH,
+          );
+        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(
+          Cesium.Cartesian3.subtract(target, bs.center, new Cesium.Cartesian3()),
+        );
+      }
+      function bindCoordsUpdate() {
+        const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas),
+          coordsEl = document.getElementById("coords");
+        handler.setInputAction((e) => {
+          const ray = viewer.camera.getPickRay(e.endPosition),
+            cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+          if (cartesian) {
+            const cartographic = Cesium.Cartographic.fromCartesian(cartesian),
+              lng = Cesium.Math.toDegrees(cartographic.longitude).toFixed(5),
+              lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(5),
+              height = cartographic.height.toFixed(1);
+            coordsEl.textContent = `经度: ${lng} 纬度: ${lat} 高度: ${height}m`;
+          }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      }
+      function flyToPreset(key) {
+        const v = {
+          bajin: ["巴金故居", 121.435984, 31.210537, "武康路113号"],
+          zhangleping: ["张乐平故居", 121.438724, 31.214444, "五原路288弄3号"],
+          keling: ["柯灵故居", 121.437794, 31.212462, "复兴西路147号"],
+          longhua_memorial: ["龙华烈士纪念馆", 121.455464, 31.18285, "天钥桥路1155号龙华烈士陵园"],
+          longhua: ["龙华寺", 121.4529, 31.1752, "龙华路2853号"],
+        }[key];
+        v &&
+          (viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(v[1], v[2], 520),
+            orientation: { pitch: Cesium.Math.toRadians(-36) },
+          }),
+          status(`正在飞行至Excel采集点：${v[0]}｜${v[3]}`),
+          info(v[0], `Excel采集点位：${v[3]}<br>坐标：${v[1].toFixed(6)}, ${v[2].toFixed(6)}`));
+      }
+      function startMeasure(type) {
+        (status(`已开启${"distance" === type ? "距离量测" : "面积量测"}功能。请在地图上点击点位。`),
+          "function" == typeof startMeasureAction && startMeasureAction(type));
+      }
+      function startClipPolygon() {
+        ((drawClipMode = !0),
+          (drawClipPoints = []),
+          clearClipEntities(),
+          status("裁剪模式：在地球上依次点击顶点（至少3个），双击完成闭合。"));
+      }
+      function clearClipEntities() {
+        const existing = viewer.entities.getById("_clipOutline");
+        (existing && viewer.entities.remove(existing),
+          drawClipPoints.forEach((_, i) => {
+            const e = viewer.entities.getById(`_clipPt${i}`);
+            e && viewer.entities.remove(e);
+          }));
+      }
+      function finishClipPolygon() {
+        if (((drawClipMode = !1), drawClipPoints.length < 3))
+          return (status("裁剪区需要至少3个顶点，已取消。"), void (drawClipPoints = []));
+        const degrees = [],
+          lnglats = [];
+        for (const p of drawClipPoints) {
+          const carto = Cesium.Cartographic.fromCartesian(p),
+            lng = Cesium.Math.toDegrees(carto.longitude),
+            lat = Cesium.Math.toDegrees(carto.latitude);
+          (degrees.push(lng, lat), lnglats.push(`${lng.toFixed(6)},${lat.toFixed(6)}`));
+        }
+        ((clipPolygonDegrees = degrees), clearClipEntities(), applyWhiteCoverageMask(!0));
+        const dataStr = JSON.stringify(degrees.map((v) => +v.toFixed(6)));
+        (console.log("裁剪区坐标数据（保存备用）：\n" + dataStr),
+          status(
+            `裁剪区已设定：${drawClipPoints.length}个顶点\n数据：${dataStr}\n请复制控制台完整数据发给助手。`,
+          ));
+      }
+      function cancelClipPolygon() {
+        ((drawClipMode = !1),
+          (clipPolygonDegrees = null),
+          clearClipEntities(),
+          (drawClipPoints = []),
+          applyWhiteCoverageMask(!0),
+          status("裁剪区已取消，已恢复默认隐藏范围。再次点击▣可重新绘制。"));
+      }
+      function bindClipDraw() {
+        (viewer.screenSpaceEventHandler.setInputAction((e) => {
+          if (!drawClipMode) return;
+          if (drawClipPoints.length >= 3) {
+            const first = drawClipPoints[0],
+              pick =
+                viewer.scene.pickPosition(e.position) ||
+                viewer.camera.pickEllipsoid(e.position, viewer.scene.globe.ellipsoid);
+            if (!pick) return;
+            if (Cesium.Cartesian3.distance(first, pick) < 50) return void finishClipPolygon();
+          }
+          const p =
+            viewer.scene.pickPosition(e.position) ||
+            viewer.camera.pickEllipsoid(e.position, viewer.scene.globe.ellipsoid);
+          if (!p) return;
+          drawClipPoints.push(p);
+          const idx = drawClipPoints.length - 1;
+          (viewer.entities.add({
+            id: `_clipPt${idx}`,
+            position: p,
+            point: {
+              pixelSize: 10,
+              color: Cesium.Color.RED,
+              outlineColor: Cesium.Color.WHITE,
+              outlineWidth: 2,
+            },
+            label: {
+              text: 0 === idx ? "起" : `${idx}`,
+              font: "12px Microsoft YaHei",
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              pixelOffset: new Cesium.Cartesian2(0, -20),
+            },
+          }),
+            status(`已点${idx + 1}个顶点，继续点击或靠近起点闭合。`));
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK),
+          viewer.screenSpaceEventHandler.setInputAction((e) => {
+            drawClipMode && finishClipPolygon();
+          }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK),
+          viewer.screenSpaceEventHandler.setInputAction(() => {
+            drawClipMode && cancelClipPolygon();
+          }, Cesium.ScreenSpaceEventType.RIGHT_CLICK));
+      }
+      function setMode(mode) {
+        (document
+          .querySelectorAll(".top .tab")
+          .forEach((b) =>
+            b.classList.toggle(
+              "active",
+              b.textContent.includes(
+                { explore: "自由", story: "故事", crowd: "人流", course: "课程" }[mode],
+              ),
+            ),
+          ),
+          "story" === mode && (leftTab("story"), setPanelState("storyCard", !0), startStory()),
+          "crowd" === mode && (rightTab("crowd"), toggleFeature("heat")),
+          "course" === mode && rightTab("course"),
+          "explore" === mode && (leftTab("explore"), rightTab("chart")),
+          (document.getElementById("sceneState").textContent =
+            `${modeName(mode)}｜武康路-衡复风貌区｜建筑图层${Object.keys(loadedTilesets).length}/${layerDefs.length}`));
+      }
+      function modeName(m) {
+        return { explore: "自由探索", story: "游客故事", crowd: "人流分析", course: "课程展示" }[m];
+      }
+      function leftTab(id) {
+        tabSwitch("left", id);
+      }
+      function rightTab(id) {
+        tabSwitch("right", id);
+      }
+      function tabSwitch(side, id) {
+        ("right" === side && (currentRightTab = id),
+          document.querySelectorAll(`.${side} .tab`).forEach((b) =>
+            b.classList.toggle(
+              "active",
+              b.textContent.includes(
+                {
+                  explore: "探索",
+                  route: "路线",
+                  story: "故事",
+                  journal: "手账",
+                  crowd: "人流",
+                  building: "建筑",
+                  chart: "图表",
+                  course: "课程",
+                }[id],
+              ),
+            ),
+          ),
+          document
+            .querySelectorAll(`[id^='${side}-']`)
+            .forEach((s) => s.classList.toggle("hide", s.id !== `${side}-${id}`)),
+          "right" === side &&
+            "building" === id &&
+            setTimeout(() => {
+              renderWhiteStatsChart();
+            }, 60),
+          "right" === side &&
+            "chart" === id &&
+            setTimeout(() => {
+              charts.route && charts.route.resize();
+            }, 60));
+      }
+      function setPanelState(id, open) {
+        document.getElementById(id).classList.toggle("open", open);
+      }
+      function toggleFeature(key) {
+        return "heat" === key
+          ? toggleHeat()
+          : "split" === key
+            ? toggleSplit()
+            : "night" === key
+              ? setTimeSlot("night")
+              : void 0;
+      }
+      let currentRouteKey = null;
+      function showRoute(key) {
+        if (currentRouteKey === key)
+          return (
+            clearRoutes(),
+            (currentRouteKey = null),
+            status("已取消路线显示。"),
+            void document
+              .querySelectorAll("#right-route button")
+              .forEach((b) => b.classList.remove("active"))
+          );
+        (clearRoutes(), (currentRouteKey = key));
+        const r = routes[key];
+        if (!r || !xuhuiPOISource) return;
+        document.querySelectorAll("#right-route button").forEach((b) => {
+          const onclickStr = b.getAttribute("onclick") || "";
+          b.classList.toggle("active", onclickStr.includes(`'${key}'`));
+        });
+        const pts = [],
+          nodeInfo = [];
+        if (
+          (xuhuiPOISource.entities.values.forEach((e) => {
+            e.show = r.path.includes(e.id);
+          }),
+          r.path.forEach((id) => {
+            const entity = xuhuiPOISource.entities.getById(id);
+            if (entity) {
+              const pos = entity.position.getValue(viewer.clock.currentTime);
+              (pts.push(pos), nodeInfo.push(entity.name));
+              const highlight = viewer.entities.add({
+                parent: entity,
+                position: pos,
+                point: {
+                  pixelSize: 20,
+                  color: C(r.color).withAlpha(0.3),
+                  outlineColor: C(r.color),
+                  outlineWidth: 2,
+                  disableDepthTestDistance: 5e3,
+                },
+              });
+              routeEntities.push(highlight);
+            }
+          }),
+          pts.length > 1)
+        ) {
+          const line = viewer.entities.add({
+            polyline: {
+              positions: pts,
+              width: 4,
+              material: new Cesium.PolylineDashMaterialProperty({ color: C(r.color) }),
+              depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                color: C(r.color).withAlpha(0.5),
+              }),
+              clampToGround: !0,
+            },
+          });
+          (routeEntities.push(line), viewer.zoomTo(line));
+        }
+        (heatEntities.length || toggleHeat(),
+          updateRouteCrowdLinkage(key),
+          info(
+            r.name,
+            `漫游路线包含：${nodeInfo.join(" -> ")}。<br>已自动隐藏无关POI并同步人流分析。`,
+          ),
+          updateCharts(key));
+      }
+      function updateRouteCrowdLinkage(routeKey) {
+        const routeValue = routes[routeKey]?.value || 30;
+        if (charts.route) {
+          const currentOption = charts.route.getOption();
+          charts.route.setOption({
+            series: [
+              currentOption.series[0],
+              currentOption.series[1],
+              {
+                name: "实时人流指数",
+                type: "gauge",
+                center: ["85%", "50%"],
+                radius: "40%",
+                detail: { formatter: "{value}", fontSize: 14, color: "#e2e8f0" },
+                data: [{ value: routeValue, name: "指数" }],
+                axisLine: {
+                  lineStyle: {
+                    color: [
+                      [0.3, "#60a5fa"],
+                      [0.7, "#facc15"],
+                      [1, "#ef4444"],
+                    ],
+                    width: 3,
+                  },
+                },
+                title: { offsetCenter: [0, "70%"], color: "#94a3b8", fontSize: 10 },
+              },
+            ],
+          });
+        }
+      }
+      function clearRoutes() {
+        for (
+          currentRouteKey = null,
+            document
+              .querySelectorAll("#right-route button")
+              .forEach((b) => b.classList.remove("active"));
+          routeEntities.length;
+        )
+          viewer.entities.remove(routeEntities.pop());
+        xuhuiPOISource && xuhuiPOISource.entities.values.forEach((e) => (e.show = !0));
+      }
+      function toggleHeat() {
+        if (heatEntities.length) {
+          for (; heatEntities.length; ) viewer.entities.remove(heatEntities.pop());
+          status("人流热力已关闭。");
+        } else
+          (crowd.forEach((c, i) => {
+            const hotColor = c[3] > 72 ? colors.拥挤 : c[3] > 52 ? colors.夜游 : colors.舒适,
+              radius =
+                "region" === c[4]?.kind ? c[4]?.radius || 700 : (c[4]?.radius || 60) + 0.45 * c[3],
+              entity = viewer.entities.add({
+                name: c[0],
+                position: Cesium.Cartesian3.fromDegrees(
+                  c[1],
+                  c[2],
+                  "region" === c[4]?.kind ? 4 : 28,
+                ),
+                properties: {
+                  intensity: c[3],
+                  count: c[4]?.count || 0,
+                  category: c[4]?.category || "人流片区",
+                  basis: c[4]?.basis || "",
+                },
+                ellipse: {
+                  semiMajorAxis: radius,
+                  semiMinorAxis: 0.72 * radius,
+                  height: "region" === c[4]?.kind ? 3 : 24,
+                  material: C(hotColor).withAlpha("region" === c[4]?.kind ? 0.22 : 0.36),
+                  outline: !1,
+                },
+              });
+            (heatEntities.push(entity),
+              "region" === c[4]?.kind &&
+                i < 8 &&
+                heatEntities.push(
+                  viewer.entities.add({
+                    position: Cesium.Cartesian3.fromDegrees(c[1], c[2], 185),
+                    label: {
+                      text: `${c[0]}\n${formatPeople(c[4].count)}`,
+                      font: "12px Microsoft YaHei",
+                      fillColor: Cesium.Color.WHITE,
+                      outlineColor: Cesium.Color.BLACK,
+                      outlineWidth: 3,
+                      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 15e3),
+                    },
+                  }),
+                ));
+          }),
+            addPointHeatAccents(),
+            status(
+              `人流热力已开启：${crowd.length}个徐汇区片区人数热力单元，武康路-安福路作为重点节点同步显示。`,
+            ));
+      }
+      function addPointHeatAccents() {
+        crowdPoints.length &&
+          crowdPoints
+            .filter((p) =>
+              ["名人故居", "文化场馆", "交通枢纽", "轨道交通", "商业消费"].includes(p.category),
+            )
+            .slice(0, 38)
+            .forEach((p) => {
+              const color = colors[p.category] || colors.文化;
+              heatEntities.push(
+                viewer.entities.add({
+                  name: p.name,
+                  position: Cesium.Cartesian3.fromDegrees(p.lng, p.lat, 135),
+                  properties: p,
+                  point: {
+                    pixelSize: "名人故居" === p.category ? 11 : 8,
+                    color: C(color).withAlpha(0.95),
+                    outlineColor: Cesium.Color.WHITE,
+                    outlineWidth: 1,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                  },
+                  label: {
+                    text: "名人故居" === p.category ? p.name : "",
+                    font: "12px Microsoft YaHei",
+                    fillColor: Cesium.Color.WHITE,
+                    outlineColor: Cesium.Color.BLACK,
+                    outlineWidth: 2,
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    pixelOffset: new Cesium.Cartesian2(0, -22),
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 9e3),
+                  },
+                }),
+              );
+            });
+      }
+      function setTimeSlot(slot) {
+        const dataMapping = {
+            morning: [55, 42, 18, 30],
+            noon: [88, 76, 36, 50],
+            afternoon: [72, 86, 42, 62],
+            evening: [94, 82, 28, 46],
+            night: [70, 58, 22, 25],
+          },
+          vals = dataMapping[slot] || dataMapping.evening;
+        (crowd.forEach((c, i) => (c[3] = vals[i] ?? c[3])),
+          charts.route &&
+            charts.route.setOption({
+              series: [
+                { name: "推荐指数", data: vals.map((v) => v + Math.floor(10 * Math.random())) },
+                { name: "拥挤风险", data: vals.slice().reverse() },
+              ],
+            }),
+          applyAtmosphere(slot),
+          renderCrowd(),
+          heatEntities.length && (toggleHeat(), toggleHeat()),
+          status(
+            `已切换到${{ morning: "上午", noon: "午间", afternoon: "下午", evening: "傍晚", night: "夜间" }[slot] || slot}时段，场景氛围已同步更新。`,
+          ));
+      }
+      function applyAtmosphere(slot) {
+        if (!viewer) return;
+        const scene = viewer.scene;
+        scene.globe.enableLighting = !0;
+        const configs = {
+            morning: {
+              brightness: 1.1,
+              lightColor: "#fffbe6",
+              direction: [0.8, -0.2, -0.5],
+              fogColor: "#e0f2fe",
+              bloom: !1,
+              skyShift: 0,
+            },
+            noon: {
+              brightness: 1.25,
+              lightColor: "#ffffff",
+              direction: [0.1, 0.1, -1],
+              fogColor: "#f8fafc",
+              bloom: !1,
+              skyShift: 0,
+            },
+            afternoon: {
+              brightness: 1,
+              lightColor: "#fef3c7",
+              direction: [-0.6, -0.3, -0.6],
+              fogColor: "#fff7ed",
+              bloom: !0,
+              bloomContrast: 110,
+              skyShift: -0.05,
+            },
+            evening: {
+              brightness: 0.5,
+              lightColor: "#ff8c00",
+              direction: [-0.9, -0.1, -0.2],
+              fogColor: "#332a5c",
+              bloom: !0,
+              bloomContrast: 135,
+              skyShift: -0.2,
+            },
+            night: {
+              brightness: 0.2,
+              lightColor: "#1e293b",
+              direction: [0.2, 0.2, -0.8],
+              fogColor: "#020617",
+              bloom: !0,
+              bloomContrast: 160,
+              skyShift: -0.5,
+            },
+          },
+          c = configs[slot] || configs.noon;
+        (baseLayer &&
+          ((baseLayer.brightness = c.brightness),
+          (baseLayer.contrast = "night" === slot ? 1.2 : 1)),
+          (scene.light = new Cesium.DirectionalLight({
+            direction: new Cesium.Cartesian3(c.direction[0], c.direction[1], c.direction[2]),
+            color: Cesium.Color.fromCssColorString(c.lightColor),
+          })),
+          (scene.fog.enabled = !0),
+          (scene.fog.color = Cesium.Color.fromCssColorString(c.fogColor)),
+          (scene.fog.density = "evening" === slot || "night" === slot ? 2e-4 : 8e-5),
+          (scene.postProcessStages.bloom.enabled = c.bloom),
+          c.bloom &&
+            ((scene.postProcessStages.bloom.uniforms.contrast = c.bloomContrast || 128),
+            (scene.postProcessStages.bloom.uniforms.brightness = -0.2),
+            (scene.postProcessStages.bloom.uniforms.glowOnly = !1),
+            (scene.postProcessStages.bloom.uniforms.delta = 1),
+            (scene.postProcessStages.bloom.uniforms.sigma = 2),
+            (scene.postProcessStages.bloom.uniforms.stepSize = 1)),
+          (scene.skyAtmosphere.brightnessShift = c.skyShift),
+          viewer.scene.requestRender());
+      }
+      function renderCrowd() {
+        const el = document.getElementById("crowdBars");
+        if (!el) return;
+        const top = crowd
+          .slice()
+          .sort((a, b) => b[3] - a[3])
+          .slice(0, 12);
+        (renderTourismStats(top),
+          (el.innerHTML =
+            top
+              .map((c) => {
+                const barColor = c[3] > 72 ? "#ef4444" : c[3] > 52 ? "#facc15" : "#38bdf8";
+                return `
+            <p>
+              ${c[0]} ${formatPeople(c[4]?.count)}
+              <span class="mini">${c[4]?.category || ""}</span>
+            </p>
+            <div class="bar">
+              <i style="width:${c[3]}%;background:${barColor}"></i>
+            </div>
+          `;
+              })
+              .join("") +
+            `<p class="mini">当前显示Top ${top.length}/${crowd.length}片区；点状名人故居与文化节点作为地图叠加层显示。</p>`));
+      }
+      function renderTourismStats(top) {
+        const total = crowd.reduce((sum, c) => sum + Number(c[4]?.count || 0), 0),
+          avg = crowd.length
+            ? Math.round(crowd.reduce((sum, c) => sum + Number(c[3] || 0), 0) / crowd.length)
+            : 0,
+          hot = top[0],
+          stats = document.getElementById("tourismStats"),
+          signal = document.getElementById("tourismSignal");
+        (stats &&
+          (stats.innerHTML = [
+            ["./Data/smart-tourism/icon_tourism_count_32.png", "今日客流", formatPeople(total)],
+            ["./Data/smart-tourism/icon_touriist_count_32.png", "承载指数", `${avg}%`],
+          ]
+            .map(
+              ([icon, label, value]) =>
+                `<span><img src="${icon}" alt=""><i>${label}<b>${value}</b></i></span>`,
+            )
+            .join("")),
+          signal &&
+            (signal.innerHTML = hot
+              ? `<img src="./Data/smart-tourism/icon_warning.png" alt=""><span>态势提示：${hot[0]}当前热度最高，建议优先推荐支路休憩点、文学节点等低密节点进行分流。</span>`
+              : '<img src="./Data/smart-tourism/icon_warning.png" alt=""><span>态势提示：等待人流数据加载。</span>'));
+      }
+      function formatPeople(n) {
+        return Number.isFinite(Number(n)) ? `${Number(n).toLocaleString("zh-CN")}人` : "--";
+      }
+      function startStory() {
+        ((storyState.active = !0), setPanelState("storyCard", !0));
+        const s = storyState.steps[storyState.index++ % storyState.steps.length];
+        ((document.getElementById("storyTitle").textContent = s[0]),
+          (document.getElementById("storyText").textContent = s[1]),
+          showRoute(s[2]),
+          s[0].includes("旧影") && !splitOpen && toggleSplit(),
+          s[0].includes("避开") && !heatEntities.length && toggleHeat());
+      }
+      function replayTrack() {
+        let i = 0;
+        status("故事轨迹回放开始。");
+        const t = setInterval(() => {
+          (flyTo(nodes[i % nodes.length]),
+            ++i > nodes.length && (clearInterval(t), status("轨迹回放结束。")));
+        }, 900);
+      }
+      function makeJournal() {
+        const picked = routeEntities[0]?.name || "自由探索路线";
+        document.getElementById("journal").textContent =
+          `已生成：${picked}，包含兴趣节点、人流提醒、历史对照和空间标注摘要。`;
+      }
+      function runCommand() {
+        const text = document.getElementById("voice").value.trim();
+        return /路网|绿地|水系|地面层/.test(text)
+          ? status("当前只保留建筑图层，其他要素不参与显示。")
+          : /模型|高度|年代|年龄|功能|计算|分析|属性|数据/.test(text)
+            ? void (modelSelectMode ? rightTab("building") : toggleModelSelectMode())
+            : /纹理|贴图|浏览/.test(text)
+              ? (setBuildingMode(), focusBuildings())
+              : /建筑|实景/.test(text)
+                ? focusBuildings()
+                : /徐家汇|商圈/.test(text)
+                  ? (flyTo({ lng: 121.4384, lat: 31.1919 }), rightTab("crowd"))
+                  : /龙华/.test(text)
+                    ? (flyTo({ lng: 121.4523, lat: 31.1755 }), rightTab("crowd"))
+                    : /滨江|西岸/.test(text)
+                      ? (flyTo({ lng: 121.4658, lat: 31.1846 }), rightTab("crowd"))
+                      : /南站/.test(text)
+                        ? (flyTo({ lng: 121.4302, lat: 31.1542 }), rightTab("crowd"))
+                        : /人少|避让|安静/.test(text)
+                          ? showRoute("quiet")
+                          : /故事|信/.test(text)
+                            ? setMode("story")
+                            : /老照片|历史|卷帘/.test(text)
+                              ? (splitOpen || toggleSplit(), flyTo(nodes[3]))
+                              : /巴金|文学/.test(text)
+                                ? (flyTo(nodes[0]), info(nodes[0].name, nodes[0].text))
+                                : void status(
+                                    "未识别到明确意图，可尝试地点、人流、故事、图层或历史影像指令。",
+                                  );
+      }
+      function mockVoice() {
+        ((document.getElementById("voice").value = "带我去巴金故居"), runCommand());
+      }
+      function bindPick() {
+        new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas).setInputAction((e) => {
+          if (drawMode) return;
+          const hits = viewer.scene.drillPick(e.position, 5);
+          if (hits.length) {
+            for (const p of hits)
+              if (Cesium.defined(p.id) && p.id.properties) {
+                const entity = p.id,
+                  props = entity.properties,
+                  name = props.name ? props.name.getValue() : "未知点位",
+                  cat = props.category ? props.category.getValue() : "未分类",
+                  addr = props.address ? props.address.getValue() : "暂无地址",
+                  unifiedCat = props.unifiedCat ? props.unifiedCat.getValue() : "生活服务";
+                const cartographic = Cesium.Cartographic.fromCartesian(
+                  entity.position.getValue(viewer.clock.currentTime),
+                );
+                return (
+                  flashFeature(entity, e.position),
+                  info(
+                    name,
+                    `
+                <div class="tag" style="background:${colors[unifiedCat]}">${unifiedCat}</div>
+                <p>详细分类：${cat}</p>
+                <p>详细地址：${addr}</p>
+                <p class="mini">
+                  坐标(WGS84)：${cartographic.longitude.toFixed(5)},
+                  ${cartographic.latitude.toFixed(5)}
+                </p>
+              `,
+                  )
+                );
+              }
+            if (modelSelectMode)
+              for (const p of hits)
+                if (p.tileset === loadedTilesets.whiteBuildings)
+                  return analyzeWhiteFeature(p, e.position);
+            for (const p of hits)
+              if (p.tileset === loadedTilesets.buildings) return showTextureRegion(p, e.position);
+          }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      function showTextureRegion(feature, screenPos) {
+        if (modelSelectMode) return;
+        flashFeature(feature, screenPos);
+        const pos =
+          screenPos &&
+          (viewer.scene.pickPosition(screenPos) ||
+            viewer.camera.pickEllipsoid(screenPos, viewer.scene.globe.ellipsoid));
+        if (pos) {
+          const carto = Cesium.Cartographic.fromCartesian(pos),
+            lng = Cesium.Math.toDegrees(carto.longitude).toFixed(4),
+            lat = Cesium.Math.toDegrees(carto.latitude).toFixed(4);
+          let area = "";
+          area =
+            carto.latitude > Cesium.Math.toRadians(31.2)
+              ? "徐汇北部·衡复风貌区"
+              : carto.latitude > Cesium.Math.toRadians(31.17)
+                ? "徐汇中部·上海南站片区"
+                : carto.longitude > Cesium.Math.toRadians(121.44)
+                  ? "徐汇东南·滨江沿线"
+                  : "徐汇西南·漕河泾片区";
+          const batchId = feature && Number.isFinite(feature._batchId) ? feature._batchId : 0;
+          return info(
+            "纹理建筑·区域信息",
+            `
+        坐标：${lng}°E, ${lat}°N<br>
+        所属片区：${area}<br>
+        纹理建筑批次：${batchId}<br>
+        此建筑为带纹理的真实场景建筑，无属性数据。
+        点左下角「模型选择」可切换至数据查询模式。
+      `,
+          );
+        }
+        return info(
+          "纹理建筑·区域信息",
+          "此建筑位于徐汇区。纹理建筑本身不带属性数据，点左下角「📐 模型选择」可切换至数据查询模式。",
+        );
+      }
+      function analyzeWhiteFeature(feature, screenPos) {
+        return (
+          flashFeature(feature, screenPos),
+          !whiteRecords.length && loadedTilesets.whiteBuildings
+            ? (loadWhiteStructuralMetadata()
+                .then(() => analyzeWhiteFeature(feature, screenPos))
+                .catch((e) => status(`模型属性读取失败：${e.message || e}`)),
+              info("模型选择模式", "模型真实属性正在加载，请稍候..."))
+            : renderWhiteFeatureAnalysis(feature, screenPos, feature)
+        );
+      }
+      function flashFeature(feature, screenPos) {
+        if (activeFlash) {
+          viewer.entities.remove(activeFlash.entity);
+          clearTimeout(activeFlash.timer);
+        }
+        if (activeHighlight) {
+          activeHighlight.feature.color = activeHighlight.origColor;
+          activeHighlight = null;
+        }
+        const pos = screenPos && (viewer.scene.pickPosition(screenPos) || viewer.camera.pickEllipsoid(screenPos, viewer.scene.globe.ellipsoid));
+        if (!pos) return;
+        const entity = viewer.entities.add({
+          position: pos,
+          point: { pixelSize: 24, color: Cesium.Color.RED.withAlpha(0.95), outlineColor: Cesium.Color.WHITE, outlineWidth: 3, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+          ellipse: { semiMajorAxis: 32, semiMinorAxis: 32, material: Cesium.Color.RED.withAlpha(0.15), outline: !0, outlineColor: Cesium.Color.RED, outlineWidth: 2 },
+        });
+        activeFlash = {
+          entity: entity,
+          timer: setTimeout(() => {
+            viewer.entities.remove(entity);
+            if (activeFlash && activeFlash.entity === entity) activeFlash = null;
+            viewer.scene.requestRender();
+          }, 1400),
+        };
+        if (feature && feature.tileset === loadedTilesets.whiteBuildings && void 0 !== feature.color) {
+          const orig = feature.color.clone();
+          activeHighlight = { feature: feature, origColor: orig };
+          feature.color = Cesium.Color.RED.withAlpha(0.5);
+        }
+        viewer.scene.requestRender();
+      }
+      function loadWhiteDataFields(tileset) {
+        const probe = () => {
+          if (!tileset || tileset.isDestroyed()) return;
+          const selected = tileset._selectedTiles && tileset._selectedTiles[0];
+          if (selected && selected.content && selected.content.featuresLength > 0) {
+            const f = selected.content.getFeature(0);
+            if (!f) return setTimeout(probe, 1e3);
+            let names = "function" == typeof f.getPropertyNames ? f.getPropertyNames() : f.getPropertyIds();
+            const heightKey = names.find((n) => "Height" === n || "height" === n.toLowerCase() || "高度" === n);
+            updateWhiteBuildingStyle("none");
+            status("已识别白模元数据，请在右侧面板选择分析模式。");
+          } else setTimeout(probe, 1500);
+        };
+        probe();
+      }
+      async function loadWhiteStructuralMetadata() {
+        if (whiteMetadataLoading) return whiteMetadataLoading;
+        whiteMetadataLoading = (async () => {
+          const urls = Array.from({ length: 9 }, (_, i) => `./Data/OSGB/%E7%99%BD%E8%86%9C%E5%BB%BA%E7%AD%912/NoLod_${i}.glb`);
+          const groups = await Promise.all(urls.map((url, i) => parseGlbMetadata(url, `NoLod_${i}.glb`)));
+          whiteRecords = [];
+          whiteRecordsByUri = {};
+          groups.forEach((records, i) => {
+            if (!records || !records.length) return;
+            const key = `NoLod_${i}.glb`;
+            whiteRecordsByUri[key] = records;
+            records.forEach((r, idx) => whiteRecords.push(Object.assign({ source: key, localIndex: idx }, r)));
+          });
+          textureModelRecordCache = {};
+          updateWhiteStats();
+          status(`模型属性已更新：加载 ${whiteRecords.length} 条建筑记录。`);
+          return whiteRecords;
+        })();
+        return whiteMetadataLoading;
+      }
+      function readFeatureProps(feature) {
+        const props = {};
+        if (feature && feature.getPropertyNames) {
+          feature.getPropertyNames().forEach((k) => (props[k] = feature.getProperty(k)));
+        }
+        return props;
+      }
+      async function parseGlbMetadata(url, source) {
+        const buf = await fetch(url).then(r => r.arrayBuffer());
+        const dv = new DataView(buf);
+        let offset = 12, json = null, bin = null;
+        while (offset + 8 <= buf.byteLength) {
+          const len = dv.getUint32(offset, !0), type = dv.getUint32(offset + 4, !0), chunkStart = offset + 8;
+          if (type === 1313821514) json = JSON.parse(new TextDecoder("utf-8").decode(new Uint8Array(buf, chunkStart, len)).replace(/\0+$/, ""));
+          if (type === 5130562) bin = buf.slice(chunkStart, chunkStart + len);
+          offset = chunkStart + len;
+        }
+        const ext = json?.extensions?.EXT_structural_metadata;
+        const table = ext?.propertyTables?.[0];
+        if (!json || !bin || !table) return [];
+        const cls = ext.schema?.classes?.[table.class] || {}, count = table.count || 0;
+        const records = Array.from({ length: count }, () => ({ source }));
+        Object.entries(table.properties || {}).forEach(([name, def]) => {
+          const classProp = cls.properties?.[name] || {};
+          let values = readMetadataProperty(json, bin, def, classProp, count);
+          const offsetVal = def.offset ?? classProp.offset ?? 0, scaleVal = def.scale ?? classProp.scale ?? 1;
+          if (offsetVal !== 0 || scaleVal !== 1) values = values.map(v => typeof v === "number" ? v * scaleVal + offsetVal : v);
+          let mappedName = name;
+          if (/Height|高度/i.test(name)) mappedName = "Height";
+          else if (/function|功能/i.test(name)) mappedName = "function";
+          else if (/age|年代/i.test(name)) mappedName = "age";
+          else if (/area|面积/i.test(name)) mappedName = "shape_area";
+          values.forEach((v, i) => records[i][mappedName] = v);
+        });
+        return records;
+      }
+      function viewSlice(json, bin, index) {
+        const bv = json.bufferViews?.[index];
+        return bv ? new DataView(bin, bv.byteOffset || 0, bv.byteLength || 0) : null;
+      }
+      function readMetadataProperty(json, bin, def, classProp, count) {
+        const type = classProp.type || "SCALAR", componentType = classProp.componentType || "FLOAT32";
+        const valueView = viewSlice(json, bin, def.values);
+        if (!valueView) return Array(count).fill(null);
+        if (type === "STRING" || def.stringOffsets !== undefined) {
+          const offsetView = viewSlice(json, bin, def.stringOffsets);
+          const bytes = new Uint8Array(valueView.buffer, valueView.byteOffset, valueView.byteLength);
+          const getOffset = i => (def.stringOffsetType === "UINT32" || classProp.stringOffsetType === "UINT32") ? offsetView.getUint32(i * 4, !0) : offsetView.getUint16(i * 2, !0);
+          const dec = new TextDecoder("utf-8");
+          return Array.from({ length: count }, (_, i) => dec.decode(bytes.slice(getOffset(i), getOffset(i + 1))));
+        }
+        const bytesPerElement = ({ INT8: 1, UINT8: 1, INT16: 2, UINT16: 2, INT32: 4, UINT32: 4, FLOAT32: 4, FLOAT64: 8 }[componentType] || 4) * ({ SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4 }[type] || 1);
+        return Array.from({ length: count }, (_, i) => {
+          const o = i * bytesPerElement;
+          if (o + bytesPerElement > valueView.byteLength) return null;
+          if (componentType === "FLOAT32") return valueView.getFloat32(o, !0);
+          if (componentType === "FLOAT64") return valueView.getFloat64(o, !0);
+          if (componentType === "UINT32") return valueView.getUint32(o, !0);
+          if (componentType === "INT32") return valueView.getInt32(o, !0);
+          return null;
+        });
+      }
+      function propVal(props, names) {
+        for (const n of names)
+          if (void 0 !== props[n] && null !== props[n] && "" !== props[n]) return props[n];
+        const lower = {};
+        Object.keys(props).forEach((k) => (lower[k.toLowerCase()] = props[k]));
+        for (const n of names) {
+          const v = lower[String(n).toLowerCase()];
+          if (null != v && "" !== v) return v;
+        }
+        return null;
+      }
+      function toNumber(v) {
+        if (null == v || "" === v) return null;
+        const n = Number(String(v).replace(/,/g, ""));
+        return Number.isFinite(n) ? n : null;
+      }
+      function metricFromProps(props) {
+        const height = toNumber(propVal(props, ["Height", "height", "HEIGHT", "高度", "建筑高度"])),
+          floor =
+            toNumber(propVal(props, ["Floor", "floor", "FLOOR", "层数", "楼层"])) ||
+            (height ? Math.max(1, Math.round(height / 3.2)) : null);
+        return {
+          height: height,
+          area: toNumber(
+            propVal(props, ["shape_area", "Shape_Area", "AREA", "Area", "面积", "建筑面积"]),
+          ),
+          length: toNumber(
+            propVal(props, ["Shape_Leng", "Shape_Length", "shape_leng", "周长", "边长"]),
+          ),
+          func: propVal(props, ["function", "Function", "FUNCTION", "功能", "功能类型"]),
+          age: propVal(props, ["age", "Age", "AGE", "年代", "建筑年代", "建成年代"]),
+          quality: propVal(props, ["quality", "Quality", "QUALITY", "质量", "品质", "建筑质量"]),
+          mergedId: propVal(props, ["merged_id", "Merged_id", "MERGED_ID", "id", "ID", "Id"]),
+          floor: floor,
+        };
+      }
+      function featureSourceKey(feature) {
+        const c = feature?.content, url = c?.url || c?._url || c?._resource?.url || "";
+        return String(url).match(/NoLod_\d+\.glb/i)?.[0] || null;
+      }
+      function whiteRecordFromFeature(feature) {
+        const key = featureSourceKey(feature), idx = feature?._batchId;
+        return (key && Number.isFinite(idx)) ? whiteRecordsByUri[key]?.[idx] : null;
+      }
+      function textureFeatureKey(feature, screenPos) {
+        const key =
+            featureSourceKey(feature) ||
+            (feature && feature.tileset === loadedTilesets.buildings
+              ? "textureBuildings"
+              : "unknown"),
+          bid = feature && Number.isFinite(feature._batchId) ? feature._batchId : null,
+          pos =
+            screenPos &&
+            (viewer.scene.pickPosition(screenPos) ||
+              viewer.camera.pickEllipsoid(screenPos, viewer.scene.globe.ellipsoid));
+        let locPart = "";
+        if (pos) {
+          const c = Cesium.Cartographic.fromCartesian(pos);
+          locPart = `#${Math.round(1e4 * Cesium.Math.toDegrees(c.longitude))}-${Math.round(1e4 * Cesium.Math.toDegrees(c.latitude))}`;
+        }
+        return null !== bid ? `${key}#b${bid}${locPart}` : `${key}${locPart || "#fallback"}`;
+      }
+      function collectWhiteTilePositions() {
+        const tileset = loadedTilesets.whiteBuildings;
+        if (!tileset) return [];
+        const modelMatrix = tileset.modelMatrix || Cesium.Matrix4.IDENTITY, positions = [];
+        (function visit(tile) {
+          if (tile) {
+            const content = tile.content;
+            if (content?.url && Number.isFinite(tile._batchId) && tile.boundingVolume?.boundingSphere) {
+              const center = Cesium.Matrix4.multiplyByPoint(modelMatrix, tile.boundingVolume.boundingSphere.center.clone(), new Cesium.Cartesian3());
+              const source = String(content.url).match(/NoLod_\d+\.glb/i)?.[0];
+              if (source) positions.push({ source, localIndex: tile._batchId, cartesian: center });
+            }
+            tile.children?.forEach(visit);
+          }
+        })(tileset.root);
+        return positions;
+      }
+      let _whiteTilePositions = null,
+        _whiteTilePositionsTs = 0;
+      function getWhiteTilePositions() {
+        const now = Date.now();
+        return (
+          (_whiteTilePositions && now - _whiteTilePositionsTs < 3e3) ||
+            ((_whiteTilePositions = collectWhiteTilePositions()), (_whiteTilePositionsTs = now)),
+          _whiteTilePositions
+        );
+      }
+      function nearestWhiteRecord(worldPos) {
+        if (!worldPos) return null;
+        const positions = getWhiteTilePositions();
+        if (!positions.length) return null;
+        let best = null,
+          bestDist = 1 / 0;
+        for (const p of positions) {
+          const dist = Cesium.Cartesian3.distanceSquared(worldPos, p.cartesian);
+          dist < bestDist && ((bestDist = dist), (best = p));
+        }
+        if (!best) return null;
+        const records = whiteRecordsByUri[best.source];
+        return records && records[best.localIndex] ? records[best.localIndex] : null;
+      }
+      function whiteRecordFromClick(screenPos, sourceFeature) {
+        const key = textureFeatureKey(sourceFeature, screenPos);
+        if (textureModelRecordCache[key]) return textureModelRecordCache[key];
+        if (!whiteRecords.length) return null;
+        const pos =
+          screenPos &&
+          (viewer.scene.pickPosition(screenPos) ||
+            viewer.camera.pickEllipsoid(screenPos, viewer.scene.globe.ellipsoid));
+        if (!pos) return null;
+        const record = nearestWhiteRecord(pos);
+        return (record && (textureModelRecordCache[key] = record), record);
+      }
+      function renderWhiteFeatureAnalysis(whiteFeature, screenPos, sourceFeature) {
+        const directProps = whiteFeature ? readFeatureProps(whiteFeature) : {},
+          record = whiteFeature
+            ? whiteRecordFromFeature(whiteFeature)
+            : whiteRecordFromClick(screenPos, sourceFeature),
+          props = Object.keys(directProps).length ? directProps : record || {};
+        if (!Object.keys(props).length)
+          return (
+            !whiteRecords.length &&
+              loadedTilesets.whiteBuildings &&
+              loadWhiteStructuralMetadata()
+                .then(() => renderWhiteFeatureAnalysis(whiteFeature, screenPos, sourceFeature))
+                .catch((e) => status(`模型属性读取失败：${e.message || e}`)),
+            info(
+              "建筑数据分析",
+              "模型真实属性正在加载或当前点击位置暂未匹配到模型记录。请稍等几秒后再点，或先点击补充模型建筑。",
+            )
+          );
+        const m = metricFromProps(props),
+          propId = Number(props.id),
+          bId =
+            whiteFeature && void 0 !== whiteFeature._batchId
+              ? whiteFeature._batchId
+              : (m.mergedId ?? (Number.isFinite(propId) ? propId : 0));
+        (info(
+          "建筑数据分析",
+          [
+            `<b>${props.name || props.Name || props.名称 || `模型建筑 #${m.mergedId ?? bId}`}</b>`,
+            `模型ID：${m.mergedId ?? bId}`,
+            null !== m.func ? `功能类型：${m.func}` : "功能类型：字段为空",
+            null !== m.height ? `建筑高度：${m.height.toFixed(1)}m` : "建筑高度：字段为空",
+            null !== m.floor ? `推算层数：${m.floor}层（由真实Height/3.2换算）` : null,
+            null !== m.area ? `建筑面积：${Math.round(m.area)}㎡` : "建筑面积：字段为空",
+            null !== m.length ? `轮廓周长：${m.length.toFixed(1)}m` : null,
+            null !== m.age ? `建筑年代：${m.age}` : "建筑年代：字段为空",
+            null !== m.quality ? `质量等级：${m.quality}` : null,
+          ]
+            .filter(Boolean)
+            .join("<br>"),
+        ),
+          updateBuildingChart(m, m.height, m.func, m.age, m.floor));
+      }
+      let _lastBuildingTab = !1,
+        _lastChartData = "";
+      function updateBuildingChart(props, height, funcType, age, floor) {
+        if (!modelSelectMode) return;
+        const h = height ? Number(height) : null,
+          f = floor ? Number(floor) : null,
+          categories = [],
+          values = [];
+        (h && (categories.push("高度(m)"), values.push(Math.min(h, 200))),
+          f && (categories.push("层数"), values.push(Math.min(f, 40))),
+          funcType && (categories.push(String(funcType).slice(0, 4)), values.push(8)),
+          age && (categories.push(String(age).slice(0, 6)), values.push(6)),
+          categories.length || (categories.push("批次ID"), values.push(props._batchId || 1)));
+        const dataKey = categories.join("|") + "," + values.join(",");
+        dataKey !== _lastChartData &&
+          ((_lastChartData = dataKey),
+          _lastBuildingTab || ((_lastBuildingTab = !0), rightTab("building")),
+          renderWhiteStatsChart());
+      }
+      function collectWhiteFeatureCount() {
+        const white = loadedTilesets.whiteBuildings;
+        let count = 0;
+        if (white?.root) {
+          (function visit(tile) {
+            if (tile) {
+              const content = tile.content;
+              if (content && Number.isFinite(content.featuresLength)) count += content.featuresLength;
+              tile.children?.forEach(visit);
+            }
+          })(white.root);
+        }
+        return count;
+      }
+      function collectLoadedWhiteMetrics() {
+        if (whiteRecords.length) return whiteRecords.map((r) => metricFromProps(r));
+        const white = loadedTilesets.whiteBuildings, metrics = [];
+        if (white?.root) {
+          (function visit(tile) {
+            if (tile) {
+              const content = tile.content;
+              if (content?.getFeature) {
+                for (let i = 0; i < content.featuresLength; i++)
+                  metrics.push(metricFromProps(readFeatureProps(content.getFeature(i))));
+              }
+              tile.children?.forEach(visit);
+            }
+          })(white.root);
+        }
+        return metrics;
+      }
+      function buildWhiteStats() {
+        const metrics = collectLoadedWhiteMetrics(),
+          funcMix = {},
+          ageMix = {},
+          qualityMix = {},
+          heightBands = {},
+          areaBands = {};
+        let heightSum = 0,
+          heightN = 0,
+          floorSum = 0,
+          floorN = 0,
+          areaSum = 0,
+          areaN = 0;
+        metrics.forEach((m) => {
+          if (
+            (null !== m.height && ((heightSum += m.height), heightN++),
+            null !== m.floor && ((floorSum += m.floor), floorN++),
+            null !== m.area && ((areaSum += m.area), areaN++),
+            null !== m.height)
+          ) {
+            const hBand =
+              m.height < 12
+                ? "0-12m"
+                : m.height < 24
+                  ? "12-24m"
+                  : m.height < 45
+                    ? "24-45m"
+                    : m.height < 80
+                      ? "45-80m"
+                      : "80m以上";
+            heightBands[hBand] = (heightBands[hBand] || 0) + 1;
+          }
+          if (null !== m.area) {
+            const aBand =
+              m.area < 300
+                ? "300㎡以下"
+                : m.area < 800
+                  ? "300-800㎡"
+                  : m.area < 1500
+                    ? "800-1500㎡"
+                    : m.area < 3e3
+                      ? "1500-3000㎡"
+                      : "3000㎡以上";
+            areaBands[aBand] = (areaBands[aBand] || 0) + 1;
+          }
+          (null !== m.func &&
+            (funcMix[modelLabel(m.func)] = (funcMix[modelLabel(m.func)] || 0) + 1),
+            null !== m.age && (ageMix[modelLabel(m.age)] = (ageMix[modelLabel(m.age)] || 0) + 1),
+            null !== m.quality &&
+              (qualityMix[modelLabel(m.quality)] = (qualityMix[modelLabel(m.quality)] || 0) + 1));
+        });
+        const count = metrics.length || collectWhiteFeatureCount();
+        whiteStats = {
+          count: count,
+          realCount: metrics.length,
+          avgHeight: heightN ? heightSum / heightN : 0,
+          avgFloor: floorN ? floorSum / floorN : 0,
+          avgArea: areaN ? areaSum / areaN : 0,
+          funcMix: funcMix,
+          ageMix: ageMix,
+          qualityMix: qualityMix,
+          heightBands: heightBands,
+          areaBands: areaBands,
+        };
+      }
+      function modelLabel(v) {
+        const s = String(v).trim();
+        if (!s) return "未分类";
+        return (
+          {
+            Residential: "居住",
+            Residence: "居住",
+            Office: "办公",
+            Business: "商业",
+            Commercial: "商业",
+            Industry: "工业",
+            Industrial: "工业",
+            Public: "公共服务",
+            Public_service: "公共服务",
+            Other: "其他",
+          }[s] || s.replace(/_/g, " ")
+        );
+      }
+      function topEntries(obj, limit = 8) {
+        return Object.entries(obj || {})
+          .filter(([, v]) => v > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, limit);
+      }
+      function updateWhiteStats() {
+        (buildWhiteStats(), renderWhiteStatsChart());
+      }
+      function updateBuildingStatsInfo(s) {
+        const el = document.getElementById("buildingStatsInfo");
+        el &&
+          (el.innerHTML = [
+            ["模型记录", `${s.realCount || 0}条`],
+            ["平均高度", "" + (s.avgHeight ? `${s.avgHeight.toFixed(1)}m` : "读取中")],
+            ["平均层数", "" + (s.avgFloor ? `${s.avgFloor.toFixed(1)}层` : "读取中")],
+            ["平均面积", "" + (s.avgArea ? `${Math.round(s.avgArea)}㎡` : "读取中")],
+          ]
+            .map(([k, v]) => `<span>${k}<b>${v}</b></span>`)
+            .join(""));
+      }
+      function renderModelRankList(entries, total) {
+        const el = document.getElementById("buildingCategoryList");
+        if (!el) return;
+        if ("none" === (document.getElementById("modelMetricSelect")?.value || "none"))
+          return void (el.innerHTML = '<p class="mini">请选择上方分析模式以查看详细统计数据。</p>');
+        if (!entries.length)
+          return void (el.innerHTML = '<p class="mini">当前属性暂无可统计数据。</p>');
+        const max = Math.max(...entries.map(([, v]) => v), 1);
+        el.innerHTML = entries
+          .slice(0, 6)
+          .map(([name, value], idx) => {
+            const rankNode =
+              idx < 3
+                ? `<img class="rankIcon" src="./Data/smart-tourism/rank_0${idx + 1}.png" alt="">`
+                : `<i class="rankText">${idx + 1}</i>`;
+            const percent = (total ? (value / total) * 100 : 0).toFixed(1);
+            const width = Math.max(4, (value / max) * 100);
+            return `
+        <div class="item">
+          ${rankNode}
+          <b title="${name}">${name}</b>
+          <span>${value}｜${percent}%</span>
+          <div class="track" style="grid-column:2/4">
+            <i class="fill" style="width:${width}%"></i>
+          </div>
+        </div>
+      `;
+          })
+          .join("");
+      }
+      function renderWhiteStatsChart() {
+        const s = (whiteStats.count || buildWhiteStats(), whiteStats);
+        updateBuildingStatsInfo(s);
+        const mode = document.getElementById("modelMetricSelect")?.value || "none";
+        if (!s.realCount)
+          return (
+            loadedTilesets.whiteBuildings &&
+              loadWhiteStructuralMetadata()
+                .then(() => {
+                  (buildWhiteStats(), renderWhiteStatsChart());
+                })
+                .catch((e) => status(`模型属性读取失败：${e.message || e}`)),
+            renderModelRankList([], 0),
+            void updateWhiteBuildingStyle(mode)
+          );
+        if ("none" === mode)
+          return (renderModelRankList([], 0), void updateWhiteBuildingStyle("none"));
+        (renderModelRankList(
+          (
+            {
+              function: {
+                title: "模型功能分类",
+                data: topEntries(s.funcMix, 10),
+                color: "#60a5fa",
+              },
+              height: {
+                title: "模型高度分级",
+                data: Object.entries(s.heightBands || {}),
+                color: "#a78bfa",
+              },
+              age: { title: "模型年代分级", data: topEntries(s.ageMix, 10), color: "#facc15" },
+              quality: {
+                title: "模型质量等级",
+                data: topEntries(s.qualityMix, 10),
+                color: "#34d399",
+              },
+              area: {
+                title: "模型面积分级",
+                data: Object.entries(s.areaBands || {}),
+                color: "#f97316",
+              },
+            }[mode].data || []
+          ).filter(([, v]) => v > 0),
+          s.realCount,
+        ),
+          updateWhiteBuildingStyle(mode));
+      }
+      function handleBuildingMetricChange() {
+        (updateWhiteBuildingStyle(document.getElementById("modelMetricSelect")?.value || "none"),
+          renderWhiteStatsChart());
+      }
+      function updateWhiteBuildingStyle(mode) {
+        const white = loadedTilesets.whiteBuildings;
+        if (!white) return;
+        if ("none" === mode)
+          return (
+            (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#f8fafc', 1.0)" })),
+            void status("已切换至基础浏览模式，请选择分析维度。")
+          );
+        let styleConditions = [];
+        ((styleConditions =
+          "height" === mode
+            ? [
+                ["Number(${Height}) >= 80", "color('#7f1d1d')"],
+                ["Number(${Height}) >= 45", "color('#b91c1c')"],
+                ["Number(${Height}) >= 24", "color('#dc2626')"],
+                ["Number(${Height}) >= 12", "color('#ef4444')"],
+                ["Number(${Height}) > 0", "color('#f87171')"],
+                ["true", "color('#e2e8f0', 0.8)"],
+              ]
+            : "function" === mode
+              ? [
+                  [
+                    "regExp('居住|Residential|Residence').test(String(${function}))",
+                    "color('#34d399')",
+                  ],
+                  ["regExp('办公|Office').test(String(${function}))", "color('#60a5fa')"],
+                  [
+                    "regExp('商业|Business|Commercial').test(String(${function}))",
+                    "color('#fbbf24')",
+                  ],
+                  [
+                    "regExp('工业|Industry|Industrial').test(String(${function}))",
+                    "color('#a78bfa')",
+                  ],
+                  ["regExp('公共|服务|Public').test(String(${function}))", "color('#f472b6')"],
+                  ["true", "color('#e2e8f0', 0.8)"],
+                ]
+              : "age" === mode
+                ? [
+                    ["regExp('20[0-2][0-9]').test(String(${age}))", "color('#0ea5e9')"],
+                    ["regExp('19[8-9][0-9]').test(String(${age}))", "color('#f59e0b')"],
+                    ["regExp('19[0-7][0-9]').test(String(${age}))", "color('#ec4899')"],
+                    ["true", "color('#e2e8f0', 0.8)"],
+                  ]
+                : "area" === mode
+                  ? [
+                      ["Number(${shape_area}) >= 3000", "color('#1e3a8a')"],
+                      ["Number(${shape_area}) >= 1500", "color('#1d4ed8')"],
+                      ["Number(${shape_area}) >= 800", "color('#2563eb')"],
+                      ["Number(${shape_area}) >= 300", "color('#3b82f6')"],
+                      ["true", "color('#93c5fd')"],
+                    ]
+                  : [["true", "color('#e2e8f0', 0.8)"]]),
+          (white.style = new Cesium.Cesium3DTileStyle({ color: { conditions: styleConditions } })),
+          status(
+            `已应用白模 [${{ height: "高度", function: "功能", age: "年代", area: "面积" }[mode] || mode}] 专题渲染。`,
+          ));
+      }
+      function nearbyAnalysis() {
+        (startDraw("circle"), renderWhiteStatsChart(), status("距离圈选已启动。"));
+      }
+      function toggleBuildingStyle() {
+        (rightTab("building"),
+          !whiteRecords.length && loadedTilesets.whiteBuildings && loadWhiteStructuralMetadata(),
+          renderWhiteStatsChart(),
+          status("建筑真实属性统计已刷新。"));
+      }
+      function setBuildingMode() {
+        const texture = loadedTilesets.buildings,
+          white = loadedTilesets.whiteBuildings;
+        (texture && (texture.show = !0),
+          white &&
+            ((white.show = !1),
+            applyWhiteCoverageMask(!0),
+            (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" }))),
+          updateWhiteStats(),
+          (document.getElementById("sceneState").textContent = "浏览模式｜仅显示纹理建筑"));
+      }
+      function startDraw(mode) {
+        ((drawMode = mode),
+          (measurePts = []),
+          status(
+            "rect" === mode ? "点击两个对角点绘制观察片区。" : "点击中心和边界绘制服务半径。",
+          ));
+      }
+      function startMeasure() {
+        ((drawMode = "measure"), (measurePts = []), status("点击两个点进行距离量测。"));
+      }
+      function bindDraw() {
+        new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas).setInputAction((e) => {
+          if (!drawMode) return;
+          const p =
+            viewer.scene.pickPosition(e.position) ||
+            viewer.camera.pickEllipsoid(e.position, viewer.scene.globe.ellipsoid);
+          if (!p) return;
+          if (
+            (measurePts.push(p),
+            tempEntities.push(
+              viewer.entities.add({
+                position: p,
+                point: { pixelSize: 8, color: Cesium.Color.YELLOW },
+              }),
+            ),
+            measurePts.length < 2)
+          )
+            return;
+          const [a, b] = measurePts,
+            d = Cesium.Cartesian3.distance(a, b);
+          if (
+            ("measure" === drawMode &&
+              tempEntities.push(
+                viewer.entities.add({
+                  position: b,
+                  polyline: { positions: [a, b], width: 3, material: Cesium.Color.YELLOW },
+                  label: {
+                    text: `${d.toFixed(1)}m`,
+                    font: "13px Microsoft YaHei",
+                    fillColor: Cesium.Color.WHITE,
+                    outlineColor: Cesium.Color.BLACK,
+                    outlineWidth: 2,
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                  },
+                }),
+              ),
+            "circle" === drawMode &&
+              tempEntities.push(
+                viewer.entities.add({
+                  position: a,
+                  ellipse: {
+                    semiMajorAxis: d,
+                    semiMinorAxis: d,
+                    material: Cesium.Color.CYAN.withAlpha(0.25),
+                    outline: !0,
+                    outlineColor: Cesium.Color.CYAN,
+                  },
+                }),
+              ),
+            "rect" === drawMode)
+          ) {
+            const ca = Cesium.Cartographic.fromCartesian(a),
+              cb = Cesium.Cartographic.fromCartesian(b);
+            tempEntities.push(
+              viewer.entities.add({
+                rectangle: {
+                  coordinates: Cesium.Rectangle.fromRadians(
+                    Math.min(ca.longitude, cb.longitude),
+                    Math.min(ca.latitude, cb.latitude),
+                    Math.max(ca.longitude, cb.longitude),
+                    Math.max(ca.latitude, cb.latitude),
+                  ),
+                  material: Cesium.Color.LIME.withAlpha(0.22),
+                  outline: !0,
+                  outlineColor: Cesium.Color.LIME,
+                },
+              }),
+            );
+          }
+          ((drawMode = ""), (measurePts = []), status("空间工具已完成。"));
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      function toggleLayer(key, force) {
+        const t = loadedTilesets[key];
+        if (!t) return;
+        t.show = void 0 === force ? !t.show : force;
+        const found = layerDefs.find((l) => l[0] === key);
+        status(`${found ? found[1] : key}已${t.show ? "显示" : "隐藏"}。`);
+      }
+      function focusBuildings() {
+        const t = loadedTilesets.buildings;
+        t ? viewer.flyTo(t) : status("徐汇建筑仍在加载。");
+      }
+      function toggleSplit() {
+        ((splitOpen = !splitOpen),
+          (document.getElementById("slider").style.display = splitOpen ? "block" : "none"),
+          (viewer.scene.splitPosition = splitOpen ? 0.5 : 1),
+          (historyLayer.show = splitOpen),
+          (baseLayer.splitDirection = splitOpen
+            ? Cesium.SplitDirection.LEFT
+            : Cesium.SplitDirection.NONE),
+          (historyLayer.splitDirection = splitOpen
+            ? Cesium.SplitDirection.RIGHT
+            : Cesium.SplitDirection.NONE),
+          status(splitOpen ? "历史卷帘已开启：左侧卫星、右侧矢量记忆层。" : "历史卷帘已关闭。"));
+      }
+      function bindSplit() {
+        const slider = document.getElementById("slider"),
+          h = new Cesium.ScreenSpaceEventHandler(slider);
+        let moving = !1;
+        (h.setInputAction(() => (moving = !0), Cesium.ScreenSpaceEventType.LEFT_DOWN),
+          h.setInputAction(() => (moving = !1), Cesium.ScreenSpaceEventType.LEFT_UP),
+          h.setInputAction((m) => {
+            if (!moving) return;
+            const split = Cesium.Math.clamp(
+              (slider.offsetLeft + m.endPosition.x) / slider.parentElement.offsetWidth,
+              0.05,
+              0.95,
+            );
+            ((slider.style.left = 100 * split + "%"), (viewer.scene.splitPosition = split));
+          }, Cesium.ScreenSpaceEventType.MOUSE_MOVE));
+      }
+      function toggleModelSelectMode() {
+        modelSelectMode = !modelSelectMode;
+        const btn = document.getElementById("modelSelectBtn"),
+          texture = loadedTilesets.buildings,
+          white = loadedTilesets.whiteBuildings;
+        if (modelSelectMode) {
+          if (
+            ((btn.style.background = "rgba(239,68,68,.14)"),
+            (btn.style.borderColor = "rgba(239,68,68,.45)"),
+            (btn.style.color = "#f87171"),
+            (btn.textContent = "📐 模型选择·开"),
+            texture && (texture.show = !1),
+            white)
+          ) {
+            ((white.show = !0),
+              applyWhiteCoverageMask(!1),
+              (white.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE),
+              (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#f8fafc', 1.0)" })));
+            const select = document.getElementById("modelMetricSelect");
+            select && (select.value = "none");
+          }
+          (!whiteRecords.length && loadedTilesets.whiteBuildings && loadWhiteStructuralMetadata(),
+            renderWhiteStatsChart(),
+            rightTab("building"),
+            status(
+              "模型选择模式：纹理建筑已隐藏，点击模型建筑可查看属性数据。再次点击按钮返回浏览模式。",
+            ));
+        } else
+          ((btn.style.background = "rgba(34,197,94,.12)"),
+            (btn.style.borderColor = "rgba(34,197,94,.35)"),
+            (btn.style.color = "#4ade80"),
+            (btn.textContent = "📐 模型选择"),
+            (_lastBuildingTab = !1),
+            texture && (texture.show = !0),
+            white &&
+              ((white.show = !1),
+              (white.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE),
+              (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" })),
+              applyWhiteCoverageMask(!0)),
+            "building" === currentRightTab && rightTab("crowd"),
+            status("浏览模式：仅显示纹理建筑。点击「模型选择」切换数据查询。"));
+      }
+      function openMedia(type) {
+        const item = contentLibrary[type] || contentLibrary.pano,
+          media = document.getElementById("modalMedia");
+        ((document.getElementById("modalTitle").textContent = item.title),
+          (document.getElementById("modalText").textContent = item.text),
+          (media.innerHTML = `<img src="${item.media}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`),
+          setPanelState("modal", !0));
+      }
+      function exportReport() {
+        ((document.getElementById("modalTitle").textContent = "汇报模式"),
+          (document.getElementById("modalMedia").innerHTML = "系统汇报摘要"),
+          (document.getElementById("modalText").textContent =
+            "已汇总当前图层、路线、人流、故事和空间工具状态，可作为课堂演示的系统讲解摘要。"),
+          setPanelState("modal", !0));
+      }
+      function drawCharts() {
+        const el = document.getElementById("chart");
+        (el && ((charts.route = echarts.init(el)), updateCharts("classic")),
+          renderWhiteStatsChart(),
+          window.addEventListener("resize", () =>
+            Object.values(charts).forEach((c) => c.resize()),
+          ));
+      }
+      function updateCharts(key) {
+        if (!charts.route) return;
+        const ks = Object.keys(routes);
+        charts.route.setOption({
+          tooltip: {},
+          legend: { textStyle: { color: "#cbd5e1" } },
+          grid: { left: 34, right: 12, top: 28, bottom: 28 },
+          xAxis: {
+            type: "category",
+            data: ks.map((k) => routes[k].name),
+            axisLabel: { color: "#cbd5e1" },
+          },
+          yAxis: {
+            type: "value",
+            axisLabel: { color: "#cbd5e1" },
+            splitLine: { lineStyle: { color: "rgba(148,163,184,.18)" } },
+          },
+          series: [
+            {
+              name: "推荐指数",
+              type: "bar",
+              data: ks.map((k) => routes[k].value + (k === key ? 10 : 0)),
+              itemStyle: { color: "#38bdf8" },
+            },
+            {
+              name: "拥挤风险",
+              type: "line",
+              data: [42, 18, 55, 36],
+              itemStyle: { color: "#f97316" },
+            },
+          ],
+        });
+      }
+      function flyTo(n) {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(n.lng, n.lat, 620),
+          orientation: { heading: 0, pitch: Cesium.Math.toRadians(-48), roll: 0 },
+        });
+      }
+      function focusScene() {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(center.lng, center.lat, center.height),
+          orientation: {
+            heading: Cesium.Math.toRadians(18),
+            pitch: Cesium.Math.toRadians(-50),
+            roll: 0,
+          },
+        });
+      }
+      function clearTemp() {
+        for (; tempEntities.length; ) viewer.entities.remove(tempEntities.pop());
+        ((drawMode = ""), (measurePts = []), status("临时图形已清除。"));
+      }
+      function resetSystem() {
+        (clearRoutes(),
+          clearTemp(),
+          heatEntities.length && toggleHeat(),
+          splitOpen && toggleSplit(),
+          setBuildingMode(),
+          cancelClipPolygon(),
+          (drawClipPoints = []),
+          modelSelectMode && toggleModelSelectMode(),
+          xuhuiPOISource &&
+            ((xuhuiPOISource.show = !0),
+            xuhuiPOISource.entities.values.forEach((e) => (e.show = !0))),
+          setPanelState("drawer", !1),
+          setPanelState("storyCard", !1),
+          setPanelState("modal", !1),
+          focusScene(),
+          status("系统已恢复开放探索默认状态。"));
+      }
+      let _lastInfoHtml = "";
+      function info(title, text) {
+        const html = `<b>${title}</b><p>${text}</p>`;
+        html !== _lastInfoHtml &&
+          ((_lastInfoHtml = html), (document.getElementById("info").innerHTML = html));
+      }
+      let _lastStatusText = "";
+      function status(text) {
+        text !== _lastStatusText &&
+          ((_lastStatusText = text), (document.getElementById("status").textContent = text));
+      }
+    </script>
+  </body>
+</html>

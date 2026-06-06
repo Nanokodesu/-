@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cesium 数字孪生示例</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #toolbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+      display: flex;
+      gap: 8px;
+    }
+    #toolbar button {
+      padding: 8px 16px;
+      background: rgba(42, 61, 80, 0.85);
+      color: #fff;
+      border: 1px solid #4db8ff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #toolbar button:hover {
+      background: rgba(42, 61, 80, 1);
+    }
+    #info-panel {
+      position: absolute;
+      bottom: 30px;
+      right: 10px;
+      z-index: 1;
+      background: rgba(42, 61, 80, 0.85);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+
+  <div id="toolbar">
+    <button onclick="flyToBeijing()">飞往北京</button>
+    <button onclick="flyToShanghai()">飞往上海</button>
+    <button onclick="flyToHome()">重置视角</button>
+    <button onclick="toggleEntities()">切换标注</button>
+  </div>
+
+  <div id="info-panel">
+    <div>经度: <span id="lon">--</span></div>
+    <div>纬度: <span id="lat">--</span></div>
+    <div>高度: <span id="alt">--</span> km</div>
+  </div>
+
+  <script>
+    // 设置 Cesium Ion 访问令牌（使用默认令牌或替换为你自己的）
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc3MzMsImlhdCI6MTYyNzg0NTE4MH0.XcKpgANiY19MC4bdFUXMVEBToBmqS8kuYpUlxJHYZxk';
+
+    // 初始化 Cesium Viewer
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      animation: false,          // 隐藏动画控件
+      timeline: false,           // 隐藏时间轴
+      baseLayerPicker: true,     // 显示底图选择器
+      fullscreenButton: true,    // 显示全屏按钮
+      vrButton: false,           // 隐藏 VR 按钮
+      geocoder: true,            // 显示地名搜索
+      homeButton: false,         // 隐藏 Home 按钮
+      sceneModePicker: true,     // 显示场景模式选择器
+      navigationHelpButton: false,
+      terrain: Cesium.Terrain.fromWorldTerrain(), // 全球地形
+    });
+
+    // 移除默认的双击事件和版权信息简化显示
+    viewer.cesiumWidget.creditContainer.style.display = 'none';
+
+    // ========== 添加各类实体标注 ==========
+
+    // 1. 点标注 - 北京
+    const beijingPoint = viewer.entities.add({
+      id: 'beijing',
+      name: '北京',
+      position: Cesium.Cartesian3.fromDegrees(116.4074, 39.9042, 200),
+      point: {
+        pixelSize: 12,
+        color: Cesium.Color.RED,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 2,
+      },
+      label: {
+        text: '北京',
+        font: '16px sans-serif',
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        outlineWidth: 2,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset: new Cesium.Cartesian2(0, -14),
+      },
+    });
+
+    // 2. 面标注 - 天安门广场区域
+    const tiananmenPolygon = viewer.entities.add({
+      id: 'tiananmen',
+      name: '天安门广场',
+      polygon: {
+        hierarchy: Cesium.Cartesian3.fromDegreesArray([
+          116.390, 39.908,
+          116.398, 39.908,
+          116.398, 39.902,
+          116.390, 39.902,
+        ]),
+        material: Cesium.Color.YELLOW.withAlpha(0.3),
+        outline: true,
+        outlineColor: Cesium.Color.YELLOW,
+      },
+    });
+
+    // 3. 线标注 - 北京到上海的连线（弧线，实际是大圆航线拟合路径）
+    const routePoints = generateGreatCirclePoints(
+      [116.4074, 39.9042],
+      [121.4737, 31.2304],
+      80
+    );
+    const routeLine = viewer.entities.add({
+      id: 'beijing-shanghai-route',
+      name: '北京-上海航线',
+      polyline: {
+        positions: Cesium.Cartesian3.fromDegreesArray(routePoints.flat()),
+        width: 2,
+        material: new Cesium.PolylineDashMaterialProperty({
+          color: Cesium.Color.CYAN,
+          dashLength: 16,
+        }),
+        clampToGround: false,
+      },
+    });
+
+    // 4. 3D 模型标注 - 上海（使用圆柱体模拟建筑）
+    const shanghaiBuilding = viewer.entities.add({
+      id: 'shanghai',
+      name: '上海',
+      position: Cesium.Cartesian3.fromDegrees(121.4737, 31.2304),
+      cylinder: {
+        length: 8000,
+        topRadius: 2000,
+        bottomRadius: 2000,
+        material: Cesium.Color.DODGERBLUE.withAlpha(0.7),
+        outline: true,
+        outlineColor: Cesium.Color.WHITE,
+      },
+      label: {
+        text: '上海',
+        font: '16px sans-serif',
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        outlineWidth: 2,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset: new Cesium.Cartesian2(0, -14),
+      },
+    });
+
+    // 5. 椭球体 - 广州附近的球形标记
+    const guangzhouEllipsoid = viewer.entities.add({
+      id: 'guangzhou',
+      name: '广州',
+      position: Cesium.Cartesian3.fromDegrees(113.2644, 23.1291, 100),
+      ellipsoid: {
+        radii: new Cesium.Cartesian3(3000, 3000, 5000),
+        material: Cesium.Color.ORANGE.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.ORANGE,
+      },
+      label: {
+        text: '广州',
+        font: '14px sans-serif',
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        outlineWidth: 2,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset: new Cesium.Cartesian2(0, -20),
+      },
+    });
+
+    // ========== 大圆航线点生成函数 ==========
+    function generateGreatCirclePoints(start, end, numPoints) {
+      const [lon1, lat1] = start;
+      const [lon2, lat2] = end;
+      const points = [];
+      for (let i = 0; i <= numPoints; i++) {
+        const fraction = i / numPoints;
+        // 球面线性插值
+        const cartStart = Cesium.Cartographic.fromDegrees(lon1, lat1);
+        const cartEnd = Cesium.Cartographic.fromDegrees(lon2, lat2);
+        const lon = Cesium.Math.lerp(cartStart.longitude, cartEnd.longitude, fraction);
+        const lat = Cesium.Math.lerp(cartStart.latitude, cartEnd.latitude, fraction);
+        // 加一点高度让弧线看起来更明显
+        const height = Math.sin(fraction * Math.PI) * 500000;
+        const cart = Cesium.Cartographic.toCartesian(
+          new Cesium.Cartographic(lon, lat, height)
+        );
+        const carto = Cesium.Cartographic.fromCartesian(cart);
+        points.push([
+          Cesium.Math.toDegrees(carto.longitude),
+          Cesium.Math.toDegrees(carto.latitude),
+          height,
+        ]);
+      }
+      return points;
+    }
+
+    // ========== 相机飞行控制 ==========
+
+    function flyToBeijing() {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(116.4074, 39.9042, 50000),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-45),
+          roll: 0,
+        },
+        duration: 2,
+      });
+    }
+
+    function flyToShanghai() {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(121.4737, 31.2304, 30000),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-60),
+          roll: 0,
+        },
+        duration: 2,
+      });
+    }
+
+    function flyToHome() {
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(116.4074, 39.9042, 20000000),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-90),
+          roll: 0,
+        },
+        duration: 2.5,
+      });
+    }
+
+    let entitiesVisible = true;
+    function toggleEntities() {
+      entitiesVisible = !entitiesVisible;
+      const ids = ['beijing', 'tiananmen', 'shanghai', 'guangzhou', 'beijing-shanghai-route'];
+      ids.forEach(id => {
+        const entity = viewer.entities.getById(id);
+        if (entity) entity.show = entitiesVisible;
+      });
+    }
+
+    // ========== 鼠标位置信息 ==========
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(function (movement) {
+      const cartesian = viewer.camera.pickEllipsoid(
+        movement.endPosition,
+        viewer.scene.globe.ellipsoid
+      );
+      if (cartesian) {
+        const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        const lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(4);
+        const lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+        const alt = (viewer.camera.positionCartographic.height / 1000).toFixed(1);
+        document.getElementById('lon').textContent = lon;
+        document.getElementById('lat').textContent = lat;
+        document.getElementById('alt').textContent = alt;
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+    // 初始飞往中国视角
+    flyToHome();
+  </script>
+</body>
+</html>

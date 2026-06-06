@@ -1,0 +1,14 @@
+# ====== 大文件数据 ======
+Data/
+image/
+video/
+samples/
+
+# ====== 临时/系统文件 ======
+~$*.docx
+~$*.xlsx
+
+# ====== 依赖 ======
+node_modules/
+__pycache__/
+*.pyc

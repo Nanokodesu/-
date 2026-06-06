@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二次课程作业</title>
+    <script src="./Build/Cesium/Cesium.js"></script>
+    <!-- 纠偏插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/@cesium-china/cesium-map/dist/cesium.map.min.js"></script>
+    <!-- ECharts 图表库（CDN引入） -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="./Build/Cesium/Widgets/widgets.css">
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            z-index: 100;
+            color: white;
+            font-size: 14px;
+        }
+
+        .toolbar select {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .toolbar select:hover {
+            border-color: #4fc3f7;
+        }
+
+        .draw-toolbar {
+            position: absolute;
+            top: 70px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            z-index: 100;
+            color: white;
+            font-size: 14px;
+        }
+
+        .draw-toolbar select {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .draw-toolbar select:hover {
+            border-color: #81c784;
+        }
+
+        #pieMap {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            width: 360px;
+            height: 300px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            z-index: 100;
+        }
+
+        #slider {
+            position: absolute;
+            left: 50%;
+            top: 0px;
+            background-color: rgba(135, 206, 235, 0.8);
+            width: 5px;
+            height: 100%;
+            z-index: 9999;
+            cursor: col-resize;
+            display: none;
+        }
+
+        .backdrop {
+            position: absolute;
+            padding: 6px 10px;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #FFD700;
+            font-size: 14px;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 200;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+
+    <div class="toolbar">
+        <label>功能模式：</label>
+        <select id="modeDropdown" onchange="switchMode()">
+            <option value="0">默认模式</option>
+            <option value="1" selected>建筑类型设色 + 饼图</option>
+            <option value="2">卷帘对比（3DTiles vs 影像）</option>
+        </select>
+    </div>
+
+    <div class="draw-toolbar">
+        <label>绘制工具：</label>
+        <select id="drawDropdown" onchange="editDraw()">
+            <option value="null">不绘制</option>
+            <option value="drawCircle">绘制圆</option>
+            <option value="drawRectangle">绘制矩形</option>
+            <option value="clear">清除绘制</option>
+        </select>
+    </div>
+    <div id="pieMap"></div>
+    <div id="slider"></div>
+
+    <script>
+        let viewer;
+        let tileset;
+        let currentMode = '1'; // 默认开启建筑类型设色
+
+        // 建筑类型颜色映射
+        const typeColorMap = {
+            '学院': { color: 'CORNFLOWERBLUE', hex: '#6495ED' },
+            '行政': { color: 'BURLYWOOD', hex: '#DEB887' },
+            '生活': { color: 'DARKCYAN', hex: '#008B8B' },
+            '教学': { color: 'CRIMSON', hex: '#DC143C' },
+            '宿舍': { color: 'DARKKHAKI', hex: '#BDB76B' },
+            '科研': { color: 'DARKSLATEBLUE', hex: '#483D8B' },
+            '其他': { color: 'DARKGRAY', hex: '#A9A9A9' },
+            '学校周边建筑': { color: 'ALICEBLUE', hex: '#F0F8FF' },
+        };
+
+        // 按建筑类型分类设色
+        function colorbyType() {
+            if (!tileset) return;
+            const tilesetStyleType = new Cesium.Cesium3DTileStyle({
+                color: {
+                    conditions: [
+                        ["${Type} === '学院'", "color('CORNFLOWERBLUE',0.9)"],
+                        ["${Type} === '行政'", "color('BURLYWOOD',0.9)"],
+                        ["${Type} === '生活'", "color('DARKCYAN',0.9)"],
+                        ["${Type} === '教学'", "color('CRIMSON',0.9)"],
+                        ["${Type} === '宿舍'", "color('DARKKHAKI',0.9)"],
+                        ["${Type} === '科研'", "color('DARKSLATEBLUE',0.9)"],
+                        ["${Type} === '其他'", "color('DARKGRAY',0.9)"],
+                        ["${Type} === '学校周边建筑'", "color('ALICEBLUE',0.9)"],
+                    ],
+                },
+            });
+            tileset.style = tilesetStyleType;
+            // 显示饼图
+            showPieChart();
+        }
+
+        // 饼图展示
+        function showPieChart() {
+            const pieChart = echarts.init(document.getElementById('pieMap'));
+            const pieOption = {
+                title: {
+                    text: '建筑类型分布',
+                    left: 'center',
+                    top: 10,
+                    textStyle: {
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    top: 'middle',
+                    textStyle: { fontSize: 11 }
+                },
+                series: [
+                    {
+                        name: '建筑类型',
+                        type: 'pie',
+                        radius: ['35%', '65%'],
+                        center: ['55%', '55%'],
+                        avoidLabelOverlap: true,
+                        itemStyle: {
+                            borderRadius: 6,
+                            borderColor: '#fff',
+                            borderWidth: 1,
+                            opacity: 0.9
+                        },
+                        label: {
+                            show: true,
+                            fontSize: 11,
+                            formatter: '{b}\n{d}%'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 14,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        data: [
+                            { value: 15, name: '学院', itemStyle: { color: '#6495ED' } },
+                            { value: 15, name: '行政', itemStyle: { color: '#DEB887' } },
+                            { value: 43, name: '生活', itemStyle: { color: '#008B8B' } },
+                            { value: 12, name: '教学', itemStyle: { color: '#DC143C' } },
+                            { value: 20, name: '宿舍', itemStyle: { color: '#BDB76B' } },
+                            { value: 14, name: '科研', itemStyle: { color: '#483D8B' } },
+                            { value: 51, name: '其他', itemStyle: { color: '#A9A9A9' } },
+                        ]
+                    }
+                ]
+            };
+            pieChart.setOption(pieOption);
+        }
+
+        // 交互绘制圆和矩形
+        var drawingMode;                  // 绘制模式
+        var floatingPoint;                // 存储第一个点
+        var activeShapePoints = [];       // 存储动态点数组
+        var activeShape;                  // 存储动态图形
+        var tempPoints = [];              // 存储所有临时坐标点实体
+
+        // 绘制点
+        function drawPoint(position) {
+            const addPoint = viewer.entities.add({
+                name: '绘制点',
+                position: position,
+                point: {
+                    color: Cesium.Color.YELLOW,
+                    pixelSize: 5,
+                    outlineWidth: 2,
+                    outlineColor: Cesium.Color.WHITE,
+                },
+            });
+            return addPoint;
+        }
+
+        // 绘制图形（圆和矩形）
+        function drawShape(positionData) {
+            var shape;
+            if (drawingMode === 'circle') {
+                var value = typeof positionData.getValue === 'function' ? positionData.getValue(0) : positionData;
+                shape = viewer.entities.add({
+                    position: activeShapePoints[0],
+                    ellipse: {
+                        semiMinorAxis: new Cesium.CallbackProperty(
+                            function () {
+                                var r = Math.sqrt(
+                                    Math.pow(value[0].x - value[value.length - 1].x, 2) +
+                                    Math.pow(value[0].y - value[value.length - 1].y, 2)
+                                );
+                                return r;
+                            }, false),
+                        semiMajorAxis: new Cesium.CallbackProperty(
+                            function () {
+                                var r = Math.sqrt(
+                                    Math.pow(value[0].x - value[value.length - 1].x, 2) +
+                                    Math.pow(value[0].y - value[value.length - 1].y, 2)
+                                );
+                                return r;
+                            }, false),
+                        material: Cesium.Color.CHOCOLATE.withAlpha(0.8),
+                        outline: true,
+                        outlineColor: Cesium.Color.WHITE,
+                    },
+                });
+            } else if (drawingMode === 'rectangle') {
+                var arrange = typeof positionData.getValue === 'function' ? positionData.getValue(0) : positionData;//矩形坐标数组
+                shape = viewer.entities.add({
+                    name: '矩形',
+                    rectangle: {
+                        coordinates: new Cesium.CallbackProperty(function () {
+                            return Cesium.Rectangle.fromCartesianArray(arrange);
+                        }, false),
+                        material: Cesium.Color.CORNFLOWERBLUE.withAlpha(0.8),
+                        outline: true,
+                        outlineColor: Cesium.Color.WHITE,
+                    },
+                });
+            }
+            return shape;
+        }
+
+        // 绘制模式切换
+        function editDraw() {
+            const drawDropdown = document.getElementById('drawDropdown');
+
+            // 切换模式时，清理未完成的临时绘制状态
+            tempPoints.forEach(p => viewer.entities.remove(p));
+            if (activeShape) viewer.entities.remove(activeShape);
+            tempPoints = [];
+            activeShapePoints = [];
+            floatingPoint = undefined;
+            activeShape = undefined;
+
+            switch (drawDropdown.value) {
+                case 'null':
+                    drawingMode = null;
+                    break;
+                case 'drawCircle':
+                    drawingMode = 'circle';
+                    break;
+                case 'drawRectangle':
+                    drawingMode = 'rectangle';
+                    break;
+                case 'clear':
+                    viewer.entities.removeAll();
+                    drawingMode = null;
+                    drawDropdown.value = 'null';
+                    tempPoints = []; // 清空记录
+                    activeShapePoints = [];
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // 滑块拖动逻辑
+        let moveActive = false;
+        function moveSlider(movement) {
+            const slider = document.getElementById("slider");
+            if (!moveActive || !slider) return;
+            const relativeOffset = movement.endPosition.x;
+            const splitPosition = (slider.offsetLeft + relativeOffset) / slider.parentElement.offsetWidth;
+            slider.style.left = `${100.0 * splitPosition}%`;
+            viewer.scene.splitPosition = splitPosition;
+        }
+
+        // 模式切换
+        function switchMode() {
+            if (!tileset) return;
+            const dropdown = document.getElementById('modeDropdown');
+            const slider = document.getElementById("slider");
+            currentMode = dropdown.value;
+
+            switch (currentMode) {
+                case '0': // 默认模式
+                    document.getElementById('pieMap').style.display = 'none';
+                    slider.style.display = 'none';
+                    tileset.style = null;
+                    tileset.splitDirection = Cesium.SplitDirection.NONE;
+                    // 恢复部分相机控制
+                    viewer.scene.screenSpaceCameraController.enableRotate = true;
+                    viewer.scene.screenSpaceCameraController.enableTranslate = true;
+                    break;
+
+                case '1': // 建筑类型设色 + 饼图
+                    document.getElementById('pieMap').style.display = 'block';
+                    slider.style.display = 'none';
+                    tileset.style = null;
+                    tileset.splitDirection = Cesium.SplitDirection.NONE;
+                    viewer.scene.splitPosition = 0.5;
+                    colorbyType();
+                    // 恢复部分相机控制
+                    viewer.scene.screenSpaceCameraController.enableRotate = true;
+                    viewer.scene.screenSpaceCameraController.enableTranslate = true;
+                    break;
+
+                case '2': // 卷帘对比
+                    document.getElementById('pieMap').style.display = 'none';
+                    slider.style.display = 'block';
+                    tileset.style = null;
+                    // 设置3DTiles在左侧，右侧显示纯影像
+                    tileset.splitDirection = Cesium.SplitDirection.LEFT;
+                    slider.style.left = '50%';
+                    viewer.scene.splitPosition = 0.5;
+                    // 禁用旋转和缩放避免与滑块冲突
+                    viewer.scene.screenSpaceCameraController.enableRotate = false;
+                    viewer.scene.screenSpaceCameraController.enableTranslate = false;
+                    viewer.scene.screenSpaceCameraController.enableZoom = false;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        try {
+            Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNDI0MWEzNi01MzgwLTQzNDUtYWUzZi0yZTFjNWM0ZjgzOTMiLCJpZCI6NDAxOTA4LCJpYXQiOjE3NzMyMzk2OTN9.4duifFWEwheoWyaj8jQazBoqtL_MNHFWf9BGq20-h-8';
+            viewer = new Cesium.Viewer("cesiumContainer", {
+                navigationHelpButton: false,
+                infoBox: false,
+                geocoder: false,
+                homeButton: false,
+                sceneModePicker: false,
+                animation: false,
+                timeline: false,
+                fullscreenButton: false,
+                selectionIndicator: false,
+            });
+
+            // 隐藏 Cesium ion 版权信息
+            viewer._cesiumWidget._creditContainer.style.display = "none";
+
+            // 开启地形深度检测
+            viewer.scene.globe.depthTestAgainstTerrain = true;
+
+            // 移除默认图层
+            const imageryLayers = viewer.imageryLayers;
+            imageryLayers.remove(imageryLayers.get(0));
+
+            // 采用高德矢量地图（纠偏）
+            const AmapBiasProvider = new Cesium.AMapImageryProvider({
+                style: 'elec',
+                crs: 'WGS84',
+                maximumLevel: 18,
+                minimumLevel: 1,
+            });
+            viewer.imageryLayers.addImageryProvider(AmapBiasProvider);
+
+            viewer.camera.setView({
+                destination: Cesium.Cartesian3.fromDegrees(116.342, 40.000, 1500.0), // 北京林业大学中心经纬度及高度
+                orientation: {
+                    heading: Cesium.Math.toRadians(0.0), // 正北
+                    pitch: Cesium.Math.toRadians(-90.0), // 向下俯视
+                    roll: 0.0
+                }
+            });
+
+            // 功能：加载3DTiles + 建筑类型设色 + 饼图
+            (async function () {
+                tileset = await Cesium.Cesium3DTileset.fromUrl(
+                    "./Data/Slice_shp/tileset.json",
+                );
+                viewer.scene.primitives.add(tileset);
+                // 修正初始加载时的分割方向，默认为NONE
+                tileset.splitDirection = Cesium.SplitDirection.NONE;
+                viewer.flyTo(tileset);
+                // 页面加载后直接执行建筑类型设色
+                colorbyType();
+            })();
+
+            // 鼠标悬停高亮 + 实时显示建筑名称和类型
+            // 即时选择的轮廓颜色（黄色高亮）
+            const silhouetteYellow = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+            silhouetteYellow.uniforms.color = Cesium.Color.YELLOW;
+            silhouetteYellow.uniforms.length = 0.01;
+            silhouetteYellow.selected = [];
+
+            // 添加为渲染后处理阶段
+            viewer.scene.postProcessStages.add(
+                Cesium.PostProcessStageLibrary.createSilhouetteStage([
+                    silhouetteYellow,
+                ])
+            );
+
+            // 创建浮动div，用于显示建筑名称和类型
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "backdrop";
+            infoDiv.style.display = "none";
+            viewer.container.appendChild(infoDiv);
+
+            // 鼠标移动 - 黄色高亮 + 显示建筑名称和类型
+            const hoverHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+            hoverHandler.setInputAction(function (event) {
+                // 取消前一个高亮
+                silhouetteYellow.selected = [];
+                
+                const pickedObject = viewer.scene.pick(event.endPosition);
+                if (!Cesium.defined(pickedObject)) {
+                    infoDiv.style.display = "none";
+                    return;
+                }
+
+                // 黄色高亮
+                silhouetteYellow.selected = [pickedObject];
+
+                // 显示建筑名称和类型
+                const name = pickedObject.getProperty("RefName") || "未知";
+                const type = pickedObject.getProperty("Type") || "未知";
+                infoDiv.style.display = "block";
+                infoDiv.style.top = `${event.endPosition.y - 40}px`;
+                infoDiv.style.left = `${event.endPosition.x + 15}px`;
+                infoDiv.textContent = `${name} [${type}]`;
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+            // 绘制事件处理器
+            const drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+            // 左键点击
+            drawHandler.setInputAction(function (event) {
+                // 仅在绘制模式下生效
+                if (drawingMode !== 'circle' && drawingMode !== 'rectangle') return;
+
+                const earthPosition = viewer.scene.pickPosition(event.position);
+                if (Cesium.defined(earthPosition)) {
+                    // 第一次点击
+                    if (activeShapePoints.length === 0) {
+                        activeShapePoints.push(earthPosition);
+                        floatingPoint = drawPoint(earthPosition);
+                        tempPoints.push(floatingPoint); // 记录第一个点
+
+                        var dynamicPositions = new Cesium.CallbackProperty(function () {
+                            return activeShapePoints;
+                        }, false);
+
+                        activeShape = drawShape(dynamicPositions);
+                    }
+                    // 后续点击
+                    activeShapePoints.push(earthPosition);
+                    const point = drawPoint(earthPosition);
+                    tempPoints.push(point); // 记录后续的点
+                }
+            }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+            // 鼠标移动 - 动态预览
+            drawHandler.setInputAction(function (event) {
+                if (!Cesium.defined(floatingPoint)) return;
+
+                const newPosition = viewer.scene.pickPosition(event.endPosition);
+                if (Cesium.defined(newPosition)) {
+                    activeShapePoints.pop();
+                    activeShapePoints.push(newPosition);
+                }
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+            // 右键结束绘制
+            drawHandler.setInputAction(function (event) {
+                if (activeShapePoints.length === 0) return;
+
+                activeShapePoints.pop();
+                if (activeShapePoints.length > 1) {
+                    drawShape(activeShapePoints); // 绘制最终静态形状
+                }
+
+                // 清理所有临时点
+                tempPoints.forEach(p => viewer.entities.remove(p));
+                tempPoints = [];
+
+                // 清理动态预览形状
+                if (activeShape) viewer.entities.remove(activeShape);
+
+                floatingPoint = undefined;
+                activeShape = undefined;
+                activeShapePoints = [];
+            }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+            const slider = document.getElementById("slider");
+
+            // 设置初始分割位置
+            viewer.scene.splitPosition = slider.offsetLeft / slider.parentElement.offsetWidth;
+
+            const sliderHandler = new Cesium.ScreenSpaceEventHandler(slider);
+            sliderHandler.setInputAction(function () {
+                moveActive = true;
+            }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+            sliderHandler.setInputAction(moveSlider, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+            sliderHandler.setInputAction(function () {
+                moveActive = false;
+            }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+            // 页面加载完成后，默认执行饼图加载
+            setTimeout(function () {
+                showPieChart();
+            }, 500);
+            viewer.scene.screenSpaceCameraController.enableRotate = true;
+            viewer.scene.screenSpaceCameraController.enableTranslate = true;
+
+        } catch (error) {
+            console.error(error);
+            alert("Error creating Cesium Viewer: " + error);
+        }
+    </script>
+</body>
+
+</html>
