@@ -1,7 +1,8 @@
 # ====== 大文件数据 ======
 Data/
-image/
+Data.zip
 video/
+image/
 samples/
 
 # ====== 临时/系统文件 ======
