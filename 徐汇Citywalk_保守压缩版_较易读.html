@@ -109,7 +109,7 @@
     .heat-legend i {
       width: 14px;
       height: 9px;
-      border-radius: 2px;
+      border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, .45)
     }
 
@@ -1046,7 +1046,7 @@ color: #f87171;
       if (!heatItems.length) return status("三类POI点位尚未加载。");
       const b = getPOIHeatBounds(heatItems), data = buildPOIHeatData(heatItems);
       poiHeatEntity = CesiumHeatmap.create(viewer, b, {
-        radius: 58, blur: .52, maxOpacity: .86, minOpacity: .08,
+        radius: 15, blur: .52, maxOpacity: .86, minOpacity: .08,
         gradient: { ".05": "#2563eb", ".22": "#22c55e", ".42": "#facc15", ".62": "#f97316", ".82": "#ef4444", "1": "#7f1d1d" },
       });
       poiHeatEntity.setWGS84Data(0, 18, data);
