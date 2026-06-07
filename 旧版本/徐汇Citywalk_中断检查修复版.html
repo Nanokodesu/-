@@ -5,8 +5,8 @@
 <script src="./Data/Plug-in/cesium-heatmap/cesium-heatmap/CesiumHeatmap.js"></script>
 <script src="./Data/Plug-in/echarts-6.0.0/echarts-6.0.0/dist/echarts.min.js"></script>
 <link rel="stylesheet" href="./Build/Cesium/Widgets/widgets.css" />
-<style>html,body,#map{width:100%;height:100%;margin:0;overflow:hidden;font-family:"Microsoft YaHei",Arial,sans-serif;background:#06101c;color:#e5edf8}*{box-sizing:border-box}.cesium-widget-credits,#credit{display:none!important}.panel{position:absolute;z-index:10;background:linear-gradient(180deg,rgba(6,10,22,0.85),rgba(5,12,28,0.88)),url("./Data/smart-tourism/panel_dialog_v2.png") center/100% 100% no-repeat;border:1px solid rgba(56,189,248,0.32);border-radius:8px;box-shadow:0 14px 42px rgba(0,0,0,0.45),inset 0 0 24px rgba(14,165,233,0.12);backdrop-filter:blur(15px)}.top{top:12px;left:14px;right:14px;min-height:54px;display:grid;grid-template-columns:1.1fr auto auto;gap:12px;align-items:center;padding:10px 16px;background:linear-gradient(90deg,rgba(5,10,24,0.92),rgba(8,20,42,0.78)),url("./Data/smart-tourism/panel_top_v2.png") center/100% 100% no-repeat}h1,h2,h3{margin:0;color:#f8fafc;font-weight:700}h1{font-size:18px;letter-spacing:1px}h2{font-size:14px;margin-bottom:10px;padding-left:18px;background:url("./Data/smart-tourism/title_mark.png") left center/10px 10px no-repeat;color:#bae6fd}h3{font-size:13px;margin:10px 0 8px}p{margin:6px 0;color:#cbd5e1;font-size:12px;line-height:1.6}.heat-legend{margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:11px;color:#cbd5e1}.heat-legend span{display:flex;align-items:center;gap:6px}.heat-legend i{width:14px;height:9px;border-radius:6px;border:1px solid rgba(255,255,255,.45)}button,input{height:32px;border:1px solid rgba(148,163,184,0.42);border-radius:6px;padding:0 12px;background:rgba(15,23,42,0.82);color:#f1f5f9;font-size:12px;font-weight:600;transition:all 0.2s;outline:none}button{cursor:pointer}button:hover,input:focus,.tab.active{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,0.22);background:rgba(30,41,59,0.9)}.row,.tabs,.tools{display:flex;flex-wrap:wrap;gap:7px}.voice{display:flex;gap:7px;align-items:center}.voice input{width:260px;font-weight:400}.left,.right{top:86px;bottom:100px;width:340px;padding:16px 14px;overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(56,189,248,0.3) transparent}.left{left:14px}.right{right:14px}.bottom{left:14px;right:14px;bottom:14px;min-height:72px;padding:12px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;background:linear-gradient(90deg,rgba(5,10,24,0.92),rgba(8,20,42,0.85)),url("./Data/smart-tourism/panel_bottom_v2.png") center/100% 100% no-repeat;border:1px solid rgba(56,189,248,0.25);border-radius:10px;box-shadow:0 0 30px rgba(0,0,0,0.5)}.bottom .left-group,.bottom .right-group{display:flex;align-items:center;gap:12px}.bottom .right-group{justify-content:flex-end}.coords-display{font-family:monospace;font-size:11px;color:#38bdf8;background:rgba(15,23,42,0.6);padding:6px 12px;border-radius:6px;border:1px solid rgba(56,189,248,0.15)}.view-presets{display:flex;gap:6px}.view-presets button{padding:0 10px;min-width:70px;background:rgba(56,189,248,0.12);border-color:rgba(56,189,248,0.3)}.bottom .center-group{display:flex;flex-direction:column;align-items:center;gap:6px}#status{margin:0;font-size:11px;color:#94a3b8;max-width:400px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.section,.card{border:1px solid rgba(56,189,248,0.2);border-radius:10px;background:linear-gradient(180deg,rgba(15,23,42,0.65),rgba(8,18,36,0.58)),url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat;padding:14px 12px;box-shadow:0 4px 12px rgba(0,0,0,0.2),inset 0 0 16px rgba(14,165,233,0.08);margin-bottom:12px}.info{min-height:58px;color:#e0f2fe;background:linear-gradient(180deg,rgba(14,165,233,0.18),rgba(15,23,42,0.48)),url("./Data/smart-tourism/panel_item_v2.png") center/100% 100% no-repeat;padding:12px;border:1px solid rgba(56,189,248,0.25);border-radius:8px;font-size:12px;line-height:1.6}.tag{display:inline-block;margin:3px 4px 0 0;padding:2px 7px;border-radius:999px;background:rgba(14,165,233,0.18);color:#bae6fd;font-size:11px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{font-size:11px;color:#94a3b8}.hide{display:none!important}.mapTools{position:absolute;z-index:12;left:370px;bottom:92px;display:grid;gap:8px}.tool{width:72px;height:32px;padding:0 6px;font-size:11px;display:flex;align-items:center;justify-content:flex-start;gap:6px;white-space:nowrap}.timeBtn,.tool.iconTool{display:inline-flex;align-items:center;justify-content:flex-start;gap:6px}.timeBtn img,.tool.iconTool img{width:14px;height:14px;object-fit:contain}.timeBtn{min-width:58px}.drawer{top:86px;right:360px;width:300px;max-height:calc(100vh - 180px);padding:12px;display:none}.drawer.open{display:block}.storyCard{left:50%;bottom:92px;width:min(600px,calc(100vw - 800px));transform:translateX(-50%);padding:16px;display:none;border-left:4px solid #a855f7;background:linear-gradient(180deg,rgba(6,10,22,0.8),rgba(5,12,28,0.85)),url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat}.storyCard.open{display:block}.modal{left:50%;top:50%;width:min(800px,calc(100vw - 60px));transform:translate(-50%,-50%);padding:20px;display:none;background:linear-gradient(180deg,rgba(6,10,22,0.82),rgba(5,12,28,0.9)),url("./Data/smart-tourism/modal_bg_v2.png") center/100% 100% no-repeat;box-shadow:0 0 50px rgba(0,0,0,0.6),0 0 20px rgba(56,189,248,0.2)}.modal.open{display:block;z-index:30}.modal .media{height:380px;border-radius:10px;background:linear-gradient(135deg,#1e293b,#0f172a),url("./Data/smart-tourism/scene_01.png") center/cover no-repeat;display:grid;place-items:center;color:#dbeafe;margin:12px 0;border:1px solid rgba(56,189,248,0.15);box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}.photoPreview{position:absolute;z-index:40;width:260px;padding:9px;border:1px solid rgba(56,189,248,0.45);border-radius:10px;background:rgba(8,16,30,0.94);box-shadow:0 14px 38px rgba(0,0,0,0.55);pointer-events:none;display:none}.photoPreview img{width:100%;height:145px;object-fit:cover;border-radius:7px;display:block}.photoPreview b{display:block;margin-top:7px;color:#f8fafc;font-size:13px}.photoPreview span{display:block;margin-top:3px;color:#94a3b8;font-size:11px;line-height:1.45}.checkinCard{display:grid;grid-template-columns:82px minmax(0,1fr);gap:9px;align-items:center;min-height:88px}.checkinCard img,.checkinPlaceholder{width:82px;height:68px;border-radius:8px;object-fit:cover;background:linear-gradient(135deg,rgba(192,132,252,0.35),rgba(15,23,42,0.9));display:grid;place-items:center;color:#f5d0fe;font-size:20px}.checkinCard b{display:block;color:#f8fafc;font-size:14px}.checkinCard span{display:block;color:#c4b5fd;font-size:11px;line-height:1.45;margin:3px 0 7px}.checkinTags{display:flex;gap:5px;flex-wrap:wrap}.checkinTags em{font-style:normal;font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(250,204,21,0.16);color:#fde68a}#chart{height:180px}.buildingStats,.tourismStats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 8px}.tourismStats{margin-bottom:10px}.tourismStats span,.buildingStats span{display:block;padding:7px;border:1px solid rgba(56,189,248,0.16);border-radius:8px;background:linear-gradient(180deg,rgba(15,23,42,0.52),rgba(8,18,36,0.42)),url("./Data/smart-tourism/panel_stat_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1}.tourismStats span{display:grid;grid-template-columns:30px minmax(0,1fr);gap:7px;align-items:center}.tourismStats img{width:26px;height:26px}.tourismStats b,.buildingStats b{display:block;color:#f8fafc;font-size:14px;margin-top:2px}.tourismSignal{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:center;margin:8px 0 10px;padding:7px;border-left:3px solid #38bdf8;background:linear-gradient(90deg,rgba(14,165,233,0.16),rgba(15,23,42,0.34)),url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1;line-height:1.45}.tourismSignal img{width:20px;height:20px}.buildingControls{display:flex;gap:7px;align-items:center;margin:8px 0}.buildingControls select{flex:1;height:30px;border-radius:7px;border:1px solid rgba(148,163,184,0.28);background:#0f172a;color:#e2e8f0;padding:0 8px}.buildingActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.buildingActions button{min-height:30px;font-size:11px}.modelList{display:grid;gap:5px;margin:8px 0}.modelList .item{display:grid;grid-template-columns:22px minmax(0,1fr) 56px;gap:8px;align-items:center;padding:5px 6px;border-radius:6px;background:linear-gradient(90deg,rgba(15,23,42,0.28),rgba(8,18,36,0.18)),url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1}.modelList .rankIcon{width:18px;height:18px;object-fit:contain}.modelList .rankText{color:#38bdf8;font-weight:700;text-align:center}.modelList .track{height:7px;border-radius:999px;background:rgba(148,163,184,0.16);overflow:hidden}.modelList .fill{display:block;height:100%;border-radius:999px;background:#38bdf8}.modelList b{color:#f8fafc;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#buildingChart{width:100%;height:178px;margin-top:8px}.bar{height:8px;border-radius:999px;background:rgba(148,163,184,0.2);overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:#38bdf8}#slider{position:absolute;z-index:20;top:0;bottom:0;left:50%;display:none;width:5px;background:rgba(56,189,248,0.76);cursor:col-resize;box-shadow:0 0 18px rgba(56,189,248,0.78)}.distance-legend{position:absolute!important;right:360px!important;bottom:100px!important;z-index:999}.compass{position:absolute!important;bottom:180px!important;right:350px!important;z-index:999}.navigation-controls{position:absolute!important;bottom:260px!important;right:360px!important;z-index:999}@media (max-width:1120px){.top{grid-template-columns:1fr}.left,.right{width:300px}.bottom{left:320px;right:320px}.voice input{width:190px}}</style>
-</head><body><div id="map"></div><div id="credit"></div><div id="slider"></div><header class="panel top"><div><h1>徐汇区Citywalk开放探索数字孪生导览系统</h1><p id="sceneState">自由探索｜模型加载中｜当前范围：徐汇区全域，武康路为重点节点</p></div><div class="tabs"><button class="tab active" onclick="setMode('explore')">自由探索</button><button class="tab" onclick="setMode('story')">游客故事</button><button class="tab" onclick="setMode('crowd')">人流分析</button></div><div class="voice"><button onclick="mockVoice()">语音</button><input id="voice" value="哪里人少" /><button class="primary" onclick="runCommand()"> 飞行</button><button onclick="resetSystem()">重置</button></div></header><aside class="panel left"><div class="tabs"><button class="tab active" onclick="leftTab('explore')">探索</button><button class="tab" onclick="leftTab('route')">路线</button><button class="tab" onclick="leftTab('story')">故事</button><button class="tab" onclick="leftTab('journal')">手账</button></div><section id="left-explore"><div class="section"><h2>探索总览</h2><p>今日推荐：巴金故居、老洋房街角、安静支路。</p><p>当前高热节点：主街入口、街角拍照点。</p><button class="primary" onclick="toggleXuhuiPOIs()" style="margin-top: 8px; width: 100%"> 显示/隐藏 全域POI点位 </button><button onclick="togglePOIHeatmap()" style="margin-top: 8px; width: 100%">POI热力图</button><div class="heat-legend"><span><i style="background:#2563eb"></i>低密度</span><span><i style="background:#22c55e"></i>中密度</span><span><i style="background:#facc15"></i>较高密度</span><span><i style="background:#ef4444"></i>核心区</span></div></div><div class="section"><h2>兴趣点分类</h2><div class="grid" id="filters"></div></div><div class="section"><h2>当前节点</h2><div id="info" class="info">点击地图节点、建筑或路线查看说明。</div></div><div class="section"><h2>打卡推荐地</h2><div class="info" style=" min-height: auto; background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(15, 23, 42, 0.45)), url(&quot;./Data/smart-tourism/panel_word_right_bg.png&quot;) center/cover no-repeat; border-color: rgba(168, 85, 247, 0.25); "><div id="checkinCarousel" class="checkinCard"></div></div></div></section><section id="left-route" class="hide"><div class="section"><h2>路线与节点</h2><div class="grid" id="routeBtns"></div></div><div class="section"><h2>路线节点列表</h2><div id="nodeList"></div></div></section><section id="left-story" class="hide"><div class="section"><h2>一封没有寄出的信</h2><p>故事不是默认强制流程，而是游客进入沉浸游览时触发的叙事层。</p><button class="primary" onclick="startStory()">播放下一段</button></div></section><section id="left-journal" class="hide"><div class="section"><h2>游客手账</h2><p id="journal">尚未生成。选择路线或节点后，可导出当前Citywalk摘要。</p><button onclick="makeJournal()">生成手账</button></div></section></aside><aside class="panel right"><div class="tabs"><button class="tab active" onclick="rightTab('crowd')">人流</button><button class="tab" onclick="rightTab('building')">建筑</button><button class="tab" onclick="rightTab('chart')">图表</button></div><section id="right-crowd"><div class="section"><h2>徐汇区片区人流热力</h2><div id="tourismStats" class="tourismStats"></div><div id="tourismSignal" class="tourismSignal">文旅态势读取中。</div><div id="crowdBars"></div><button onclick="toggleFeature('heat')">热力开关</button></div></section><section id="right-chart" class="hide"><div class="section"><h2>路线与人流联动</h2><div id="chart"></div></div></section><section id="right-building" class="hide"><div class="section"><h2>建筑与空间分析</h2><div id="buildingStatsInfo" class="buildingStats"></div><div class="buildingControls"><select id="modelMetricSelect" onchange="handleBuildingMetricChange()"><option value="none" selected>请选择分析模式</option><option value="function">按功能分类</option><option value="height">按高度分级</option><option value="age">按年代分级</option><option value="quality">按质量等级</option><option value="area">按面积分级</option></select><button onclick="toggleBuildingStyle()">刷新</button></div><div class="buildingActions"><button onclick="applyBuildingDistanceStyle()">300/500/1000m可达</button><button onclick="applySameTypeStyle()">提取同类建筑</button><button onclick="resetBuildingAnalysis()">恢复基础色</button></div><div id="buildingCategoryList" class="modelList"></div><div id="buildingChart"></div><button onclick="nearbyAnalysis()">距离圈选</button></div></section></aside><section class="panel bottom"><div class="left-group"><div class="view-presets"><button onclick="flyToPreset('wukang')">武康大楼</button><button onclick="flyToPreset('bajin')">巴金故居</button><button onclick="flyToPreset('xujiahui')">徐家汇中心</button><button onclick="flyToPreset('longhua')">龙华寺</button></div></div><div class="center-group"><div class="tabs"><button onclick="toggleModelSelectMode()" id="modelSelectBtn" style=" background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.35); color: #4ade80; "> 📐 模型选择 </button><button class="timeBtn" onclick="setTimeSlot('morning')"><img src="./Data/smart-tourism/time_morning.png" alt="" />上午 </button><button class="timeBtn" onclick="setTimeSlot('noon')"><img src="./Data/smart-tourism/time_noon.png" alt="" />午间 </button><button class="timeBtn" onclick="setTimeSlot('afternoon')"><img src="./Data/smart-tourism/time_afternoon.png" alt="" />下午 </button><button class="timeBtn" onclick="setTimeSlot('evening')"><img src="./Data/smart-tourism/time_evening.png" alt="" />傍晚 </button><button class="timeBtn" onclick="setTimeSlot('night')"><img src="./Data/smart-tourism/time_night.png" alt="" />夜间 </button><button onclick="replayTrack()">轨迹回放</button></div><p id="status">系统初始化中。</p></div><div class="right-group"><div id="coords" class="coords-display">经度: -- 纬度: -- 高度: --</div><button onclick="startMeasure('distance')" title="测距">📏 测距</button><button onclick="startMeasure('area')" title="测面">📐 测面</button></div></section>  <div class="mapTools">
+<style>html,body,#map{width:100%;height:100%;margin:0;overflow:hidden;font-family:"Microsoft YaHei",Arial,sans-serif;background:#06101c;color:#e5edf8}*{box-sizing:border-box}.cesium-widget-credits,#credit{display:none!important}.panel{position:absolute;z-index:10;background:linear-gradient(180deg,rgba(6,10,22,0.85),rgba(5,12,28,0.88)),url("./Data/smart-tourism/panel_dialog_v2.png") center/100% 100% no-repeat;border:1px solid rgba(56,189,248,0.32);border-radius:8px;box-shadow:0 14px 42px rgba(0,0,0,0.45),inset 0 0 24px rgba(14,165,233,0.12);backdrop-filter:blur(15px)}.top{top:12px;left:14px;right:14px;min-height:54px;display:grid;grid-template-columns:minmax(420px,1fr) minmax(260px,420px) auto;gap:12px;align-items:center;padding:10px 16px;background:linear-gradient(90deg,rgba(5,10,24,0.92),rgba(8,20,42,0.78)),url("./Data/smart-tourism/panel_top_v2.png") center/100% 100% no-repeat}h1,h2,h3{margin:0;color:#f8fafc;font-weight:700}h1{font-size:18px;letter-spacing:1px}h2{font-size:14px;margin-bottom:10px;padding-left:18px;background:url("./Data/smart-tourism/title_mark.png") left center/10px 10px no-repeat;color:#bae6fd}h3{font-size:13px;margin:10px 0 8px}p{margin:6px 0;color:#cbd5e1;font-size:12px;line-height:1.6}.heat-legend{margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:11px;color:#cbd5e1}.heat-legend span{display:flex;align-items:center;gap:6px}.heat-legend i{width:14px;height:9px;border-radius:6px;border:1px solid rgba(255,255,255,.45)}button,input{height:32px;border:1px solid rgba(148,163,184,0.42);border-radius:6px;padding:0 12px;background:rgba(15,23,42,0.82);color:#f1f5f9;font-size:12px;font-weight:600;transition:all 0.2s;outline:none}button{cursor:pointer}button:hover,input:focus,.tab.active{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,0.22);background:rgba(30,41,59,0.9)}.row,.tabs,.tools{display:flex;flex-wrap:wrap;gap:7px}.voice{display:flex;gap:7px;align-items:center}.voice input{width:260px;font-weight:400}.left,.right{top:86px;bottom:100px;width:340px;padding:16px 14px;overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(56,189,248,0.3) transparent}.left{left:14px}.right{right:14px}.bottom{left:14px;right:14px;bottom:14px;min-height:72px;padding:12px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;background:linear-gradient(90deg,rgba(5,10,24,0.92),rgba(8,20,42,0.85)),url("./Data/smart-tourism/panel_bottom_v2.png") center/100% 100% no-repeat;border:1px solid rgba(56,189,248,0.25);border-radius:10px;box-shadow:0 0 30px rgba(0,0,0,0.5)}.bottom .left-group,.bottom .right-group{display:flex;align-items:center;gap:12px}.bottom .right-group{justify-content:flex-end}.coords-display{font-family:monospace;font-size:11px;color:#38bdf8;background:rgba(15,23,42,0.6);padding:6px 12px;border-radius:6px;border:1px solid rgba(56,189,248,0.15)}.view-presets{display:flex;gap:6px}.view-presets button{padding:0 10px;min-width:70px;background:rgba(56,189,248,0.12);border-color:rgba(56,189,248,0.3)}.bottom .center-group{display:flex;flex-direction:column;align-items:center;gap:6px}#status{margin:0;font-size:11px;color:#94a3b8;max-width:400px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.section,.card{border:1px solid rgba(56,189,248,0.2);border-radius:10px;background:linear-gradient(180deg,rgba(15,23,42,0.65),rgba(8,18,36,0.58)),url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat;padding:14px 12px;box-shadow:0 4px 12px rgba(0,0,0,0.2),inset 0 0 16px rgba(14,165,233,0.08);margin-bottom:12px}.info{min-height:58px;color:#e0f2fe;background:linear-gradient(180deg,rgba(14,165,233,0.18),rgba(15,23,42,0.48)),url("./Data/smart-tourism/panel_item_v2.png") center/100% 100% no-repeat;padding:12px;border:1px solid rgba(56,189,248,0.25);border-radius:8px;font-size:12px;line-height:1.6}.tag{display:inline-block;margin:3px 4px 0 0;padding:2px 7px;border-radius:999px;background:rgba(14,165,233,0.18);color:#bae6fd;font-size:11px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{font-size:11px;color:#94a3b8}.hide{display:none!important}.mapTools{position:absolute;z-index:12;left:370px;bottom:92px;display:grid;gap:8px}.tool{width:72px;height:32px;padding:0 6px;font-size:11px;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;text-align:center}.timeBtn,.tool.iconTool{display:inline-flex;align-items:center;justify-content:center;gap:6px}.timeBtn img,.tool.iconTool img{width:14px;height:14px;object-fit:contain}.timeBtn{min-width:58px}.drawer{top:86px;right:360px;width:300px;max-height:calc(100vh - 180px);padding:12px;display:none}.drawer.open{display:block}.storyCard{left:50%;bottom:92px;width:min(600px,calc(100vw - 800px));transform:translateX(-50%);padding:16px;display:none;border-left:4px solid #a855f7;background:linear-gradient(180deg,rgba(6,10,22,0.8),rgba(5,12,28,0.85)),url("./Data/smart-tourism/panel_section_v2.png") center/100% 100% no-repeat}.storyCard.open{display:block}.modal{left:50%;top:50%;width:min(800px,calc(100vw - 60px));transform:translate(-50%,-50%);padding:20px;display:none;background:linear-gradient(180deg,rgba(6,10,22,0.82),rgba(5,12,28,0.9)),url("./Data/smart-tourism/modal_bg_v2.png") center/100% 100% no-repeat;box-shadow:0 0 50px rgba(0,0,0,0.6),0 0 20px rgba(56,189,248,0.2)}.modal.open{display:block;z-index:30}.modal .media{height:380px;border-radius:10px;background:linear-gradient(135deg,#1e293b,#0f172a),url("./Data/smart-tourism/scene_01.png") center/cover no-repeat;display:grid;place-items:center;color:#dbeafe;margin:12px 0;border:1px solid rgba(56,189,248,0.15);box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}.photoPreview{position:absolute;z-index:40;width:260px;padding:9px;border:1px solid rgba(56,189,248,0.45);border-radius:10px;background:rgba(8,16,30,0.94);box-shadow:0 14px 38px rgba(0,0,0,0.55);pointer-events:none;display:none}.photoPreview img{width:100%;height:145px;object-fit:cover;border-radius:7px;display:block}.photoPreview b{display:block;margin-top:7px;color:#f8fafc;font-size:13px}.photoPreview span{display:block;margin-top:3px;color:#94a3b8;font-size:11px;line-height:1.45}.checkinCard{display:grid;grid-template-columns:82px minmax(0,1fr);gap:9px;align-items:center;min-height:88px}.checkinCard img,.checkinPlaceholder{width:82px;height:68px;border-radius:8px;object-fit:cover;background:linear-gradient(135deg,rgba(192,132,252,0.35),rgba(15,23,42,0.9));display:grid;place-items:center;color:#f5d0fe;font-size:20px}.checkinCard b{display:block;color:#f8fafc;font-size:14px}.checkinCard span{display:block;color:#c4b5fd;font-size:11px;line-height:1.45;margin:3px 0 7px}.checkinTags{display:flex;gap:5px;flex-wrap:wrap}.checkinTags em{font-style:normal;font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(250,204,21,0.16);color:#fde68a}#chart{height:180px}.buildingStats,.tourismStats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 8px}.tourismStats{margin-bottom:10px}.tourismStats span,.buildingStats span{display:block;padding:7px;border:1px solid rgba(56,189,248,0.16);border-radius:8px;background:linear-gradient(180deg,rgba(15,23,42,0.52),rgba(8,18,36,0.42)),url("./Data/smart-tourism/panel_stat_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1}.tourismStats span{display:grid;grid-template-columns:30px minmax(0,1fr);gap:7px;align-items:center}.tourismStats img{width:26px;height:26px}.tourismStats b,.buildingStats b{display:block;color:#f8fafc;font-size:14px;margin-top:2px}.tourismSignal{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:center;margin:8px 0 10px;padding:7px;border-left:3px solid #38bdf8;background:linear-gradient(90deg,rgba(14,165,233,0.16),rgba(15,23,42,0.34)),url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1;line-height:1.45}.tourismSignal img{width:20px;height:20px}.buildingControls{display:flex;gap:7px;align-items:center;margin:8px 0}.buildingControls select{flex:1;height:30px;border-radius:7px;border:1px solid rgba(148,163,184,0.28);background:#0f172a;color:#e2e8f0;padding:0 8px}.buildingActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.buildingActions button{min-height:30px;font-size:11px}.modelList{display:grid;gap:5px;margin:8px 0}.modelList .item{display:grid;grid-template-columns:22px minmax(0,1fr) 56px;gap:8px;align-items:center;padding:5px 6px;border-radius:6px;background:linear-gradient(90deg,rgba(15,23,42,0.28),rgba(8,18,36,0.18)),url("./Data/smart-tourism/panel_list_row_bg.png") center/100% 100% no-repeat;font-size:11px;color:#cbd5e1}.modelList .rankIcon{width:18px;height:18px;object-fit:contain}.modelList .rankText{color:#38bdf8;font-weight:700;text-align:center}.modelList .track{height:7px;border-radius:999px;background:rgba(148,163,184,0.16);overflow:hidden}.modelList .fill{display:block;height:100%;border-radius:999px;background:#38bdf8}.modelList b{color:#f8fafc;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#buildingChart{width:100%;height:178px;margin-top:8px}.bar{height:8px;border-radius:999px;background:rgba(148,163,184,0.2);overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:#38bdf8}#slider{position:absolute;z-index:20;top:0;bottom:0;left:50%;display:none;width:5px;background:rgba(56,189,248,0.76);cursor:col-resize;box-shadow:0 0 18px rgba(56,189,248,0.78)}.distance-legend{position:absolute!important;right:360px!important;bottom:100px!important;z-index:999}.compass{position:absolute!important;bottom:180px!important;right:350px!important;z-index:999}.navigation-controls{position:absolute!important;bottom:260px!important;right:360px!important;z-index:999}@media (max-width:1120px){.top{grid-template-columns:1fr}.left,.right{width:300px}.bottom{left:320px;right:320px}.voice input{width:190px}}.hot-bar{display:flex;gap:6px;align-items:center;justify-content:center;max-width:420px;min-width:260px;overflow:hidden;white-space:nowrap;padding:0 6px}.hot-label{height:22px;display:inline-flex;align-items:center;color:#94a3b8;font-size:11px;padding-right:2px}.hot-bar label{color:#94a3b8;font-size:11px}.hot-chip{height:24px;max-width:118px;overflow:hidden;text-overflow:ellipsis;border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:0 8px;background:rgba(239,68,68,0.1);color:#fca5a5;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px}.hot-chip:hover{background:rgba(239,68,68,0.22);border-color:rgba(239,68,68,0.65)}.hot-chip::before{content:"";width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block}.hot-chip.green{border-color:rgba(34,197,94,0.45);background:rgba(34,197,94,0.1);color:#86efac}.hot-chip.green::before{background:#22c55e}.hot-chip.green:hover{background:rgba(34,197,94,0.22);border-color:rgba(34,197,94,0.65)}</style>
+</head><body><div id="map"></div><div id="credit"></div><div id="slider"></div><header class="panel top"><div><h1>徐汇区Citywalk开放探索数字孪生导览系统</h1><p id="sceneState">自由探索｜模型加载中｜当前范围：徐汇区全域，武康路为重点节点</p><div class="hot-bar" id="topHotBar" style="display:none"></div></div><div class="tabs"><button class="tab active" onclick="setMode('explore')">自由探索</button><button class="tab" onclick="setMode('story')">游客故事</button><button class="tab" onclick="setMode('crowd')">人流分析</button></div><div class="voice"><button onclick="mockVoice()">语音</button><input id="voice" value="哪里人少" /><button class="primary" onclick="runCommand()"> 飞行</button><button onclick="resetSystem()">重置</button></div></header><aside class="panel left"><div class="tabs"><button class="tab active" onclick="leftTab('explore')">探索</button><button class="tab" onclick="leftTab('route')">路线</button><button class="tab" onclick="leftTab('story')">故事</button><button class="tab" onclick="leftTab('journal')">手账</button></div><section id="left-explore"><div class="section"><h2>探索总览</h2><p>今日推荐：巴金故居、老洋房街角、安静支路。</p><p>当前高热节点：主街入口、街角拍照点。</p><button class="primary" onclick="toggleXuhuiPOIs()" style="margin-top: 8px; width: 100%"> 显示/隐藏 全域POI点位 </button><button onclick="togglePOIHeatmap()" style="margin-top: 8px; width: 100%">POI热力图</button><div class="heat-legend"><span><i style="background:#2563eb"></i>低密度</span><span><i style="background:#22c55e"></i>中密度</span><span><i style="background:#facc15"></i>较高密度</span><span><i style="background:#ef4444"></i>核心区</span></div></div><div class="section"><h2>兴趣点分类</h2><div class="grid" id="filters"></div></div><div class="section"><h2>当前节点</h2><div id="info" class="info">点击地图节点、建筑或路线查看说明。</div></div><div class="section"><h2>打卡推荐地</h2><div class="info" style=" min-height: auto; background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(15, 23, 42, 0.45)), url(&quot;./Data/smart-tourism/panel_word_right_bg.png&quot;) center/cover no-repeat; border-color: rgba(168, 85, 247, 0.25); "><div id="checkinCarousel" class="checkinCard"></div></div></div></section><section id="left-route" class="hide"><div class="section"><h2>路线与节点</h2><div class="grid" id="routeBtns"></div></div><div class="section"><h2>路线节点列表</h2><div id="nodeList"></div></div></section><section id="left-story" class="hide"><div class="section"><h2>一封没有寄出的信</h2><p>故事不是默认强制流程，而是游客进入沉浸游览时触发的叙事层。</p><button class="primary" onclick="startStory()">播放下一段</button></div></section><section id="left-journal" class="hide"><div class="section"><h2>游客手账</h2><p id="journal">尚未生成。选择路线或节点后，可导出当前Citywalk摘要。</p><button onclick="makeJournal()">生成手账</button></div></section></aside><aside class="panel right"><div class="tabs"><button class="tab active" onclick="rightTab('crowd')">人流</button><button class="tab" onclick="rightTab('building')">建筑</button><button class="tab" onclick="rightTab('chart')">图表</button></div><section id="right-crowd"><div class="section"><h2>徐汇区片区人流热力</h2><div id="tourismStats" class="tourismStats"></div><div id="tourismSignal" class="tourismSignal">文旅态势读取中。</div><div id="crowdBars"></div><button onclick="toggleFeature('heat')">热力开关</button></div></section><section id="right-chart" class="hide"><div class="section"><h2>路线与人流联动</h2><div id="chart"></div></div><div class="section"><h2>四象限分析：POI密度 &#xd7; 人流强度</h2><div id="quadrantChart" style="width:100%;height:300px;"></div><div id="quadrantRecs" style="margin-top:6px;"></div></div></section><section id="right-building" class="hide"><div class="section"><h2>建筑与空间分析</h2><div id="buildingStatsInfo" class="buildingStats"></div><div class="buildingControls"><select id="modelMetricSelect" onchange="handleBuildingMetricChange()"><option value="none" selected>请选择分析模式</option><option value="function">按功能分类</option><option value="height">按高度分级</option><option value="age">按年代分级</option><option value="quality">按质量等级</option><option value="area">按面积分级</option></select><button onclick="toggleBuildingStyle()">刷新</button></div><div class="buildingActions"><button onclick="applyBuildingDistanceStyle()">300/500/1000m可达</button><button onclick="applySameTypeStyle()">提取同类建筑</button><button onclick="resetBuildingAnalysis()">恢复基础色</button></div><div id="buildingCategoryList" class="modelList"></div><div id="buildingChart"></div><button onclick="nearbyAnalysis()">距离圈选</button></div></section></aside><section class="panel bottom"><div class="left-group"><div class="view-presets"><button onclick="flyToPreset('wukang')">武康大楼</button><button onclick="flyToPreset('bajin')">巴金故居</button><button onclick="flyToPreset('xujiahui')">徐家汇中心</button><button onclick="flyToPreset('longhua')">龙华寺</button></div></div><div class="center-group"><div class="tabs"><button onclick="toggleModelSelectMode()" id="modelSelectBtn" style=" background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.35); color: #4ade80; "> 📐 模型选择 </button><button class="timeBtn" onclick="setTimeSlot('morning')"><img src="./Data/smart-tourism/time_morning.png" alt="" />上午 </button><button class="timeBtn" onclick="setTimeSlot('noon')"><img src="./Data/smart-tourism/time_noon.png" alt="" />午间 </button><button class="timeBtn" onclick="setTimeSlot('afternoon')"><img src="./Data/smart-tourism/time_afternoon.png" alt="" />下午 </button><button class="timeBtn" onclick="setTimeSlot('evening')"><img src="./Data/smart-tourism/time_evening.png" alt="" />傍晚 </button><button class="timeBtn" onclick="setTimeSlot('night')"><img src="./Data/smart-tourism/time_night.png" alt="" />夜间 </button><button onclick="replayTrack()">轨迹回放</button></div><p id="status">系统初始化中。</p></div><div class="right-group"><div id="coords" class="coords-display">经度: -- 纬度: -- 高度: --</div><button onclick="startMeasure('distance')" title="测距">📏 测距</button><button onclick="startMeasure('area')" title="测面">📐 测面</button></div></section>  <div class="mapTools">
     <button class="tool" title="画点" onclick="startDraw('point')"><span>●</span> 画点</button>
     <button class="tool" title="画线" onclick="startDraw('polyline')"><span>/</span> 画线</button>
     <button class="tool" title="画面" onclick="startDraw('polygon')"><span>⬔</span> 画面</button>
@@ -15,11 +15,10 @@
     <button class="tool" title="截图" onclick="printScreenScene()"><span>📷</span> 截图</button>
     <button class="tool" title="天气" id="weatherBtn" onclick="toggleWeatherPanel()"><span>☁</span> 天气</button>
     <button class="tool" title="卷帘" onclick="toggleFeature('split')"><span>◫</span> 卷帘</button>
-    <button class="tool iconTool" title="视频" onclick="openMedia('video')"><img src="./Data/smart-tourism/icon_data.png" alt="" /> 监控</button>
+    <button class="tool iconTool" title="视频" onclick="openMedia('video')"><img src="./Data/smart-tourism/icon_data.png" alt="" /> 视频</button>
     <button class="tool iconTool" title="全景" onclick="openMedia('pano')"><img src="./Data/smart-tourism/icon_stations.png" alt="" /> 全景</button>
     <button class="tool iconTool" title="汇报" onclick="exportReport()"><img src="./Data/smart-tourism/icon_warning.png" alt="" /> 预警</button>
     <button class="tool" title="清除" onclick="clearTemp()"><span>×</span> 清除</button>
-    <button class="tool" title="裁剪区" onclick="startClipPolygon()" style="background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.45); color: #f87171;"><span>▣</span> 裁剪</button>
   </div>
   <div id="weatherPanel" class="panel" style="display:none; top: 86px; left: 370px; width: 192px; padding: 10px; z-index: 20;">
     <h2>天气系统</h2>
@@ -35,7 +34,7 @@
     </div>
   </div><aside id="drawer" class="panel drawer"><h2>图层管理</h2><div id="layerBtns" class="grid"></div><p class="mini">浏览时纹理建筑优先；建筑面板默认统计全部模型。</p></aside><section id="storyCard" class="panel storyCard"><h2 id="storyTitle">故事导览</h2><p id="storyText">故事模式未开启。</p></section><section id="modal" class="panel modal"><h2 id="modalTitle">沉浸查看</h2><div class="media" id="modalMedia">历史照片/全景/视频占位</div><p id="modalText"></p><button onclick="setPanelState('modal', false)">关闭</button></section><div class="photoPreview"></div>
 <script>
-    const center = { lng: 121.4380, lat: 31.1850, height: 3500 };
+    const center = { lng: 121.4350, lat: 31.1750, height: 3500 };
     const textureModelAnchor = { lng: 121.4328, lat: 31.1605 };
     const buildingHeightOffset = 3;
     const colors = {
@@ -104,16 +103,31 @@
       ["张乐平旧居", 121.43390, 31.21185, "五原路288弄3号", "张乐平", "三毛形象创作者的生活与创作空间。", ["./Data/名人故居/05-张乐平故居-携程1.jpg", "./Data/名人故居/05-张乐平故居-携程2.jpg"]],
       ["柯灵故居", 121.43910, 31.21380, "复兴西路147号", "柯灵", "衡复风貌区文学名人节点，可与巴金故居串联。", ["./Data/名人故居/04-柯灵故居-实景.jpg", "./Data/名人故居/04-柯灵故居-北立面.jpg", "./Data/名人故居/04-柯灵故居-窗户细节.jpg", "./Data/名人故居/04-柯灵故居-效果图.jpg"]],
       ["夏衍旧居", 121.44210, 31.20970, "乌鲁木齐南路178号", "夏衍", "电影与戏剧文化记忆节点。", ["./Data/名人故居/06-夏衍旧居-游侠客.jpg"]],
+      ["黄兴旧居", 121.434505, 31.207836, "武康路393号", "黄兴", "武康路历史建筑影像节点，坐标来自全域POI JSON中的武康路393号记录。", []],
     ];
     const checkinSpots = [
       ...keyPhotoSpots.map(s => ({ name: s[0], lng: s[1], lat: s[2], address: s[3], photos: s[4], tag: "照片节点", note: "鼠标移到地图星标可预览实景照片。" })),
       ...celebritySpots.map(s => ({ name: s[0], lng: s[1], lat: s[2], address: s[3], photos: s[6], tag: "名人故居", person: s[4], note: s[5] })),
     ];
+    const videoSpots = [
+      { id: "metro_city_video", name: "美罗城影像", lng: 121.435094, lat: 31.194773, address: "上海市徐汇区肇嘉浜路1111号", src: "./Data/video/♦NO.23｜打卡上海好逛的商场｜上海徐家汇美罗城 - 1.♦NO.23｜打卡上海好逛的商场｜上海徐家汇美罗城(Av1003955648,P1).mp4", note: "徐家汇商圈影像节点。" },
+      { id: "symphony_video", name: "上海交响音乐厅影像", lng: 121.447193, lat: 31.213497, address: "复兴中路1380号", src: "./Data/video/【建筑可阅读】翻开复兴中路上这座神奇的文化场馆，它建在300多组弹簧上，房顶又酷似“馄饨皮”，它就是 - 1.上交 无包装版(Av548012618,P1).mp4", note: "复兴中路文化场馆影像节点。" },
+      { id: "bajin_video", name: "巴金故居影像", lng: 121.43820, lat: 31.21210, address: "武康路113号", src: "./Data/video/【开眼看世界】上海武康路113号是巴金先生的故居 - 1.《永远的巴金(Av77643597,P1).mp4", note: "文学记忆影像节点。" },
+      { id: "xuhui_art_video", name: "徐汇艺术馆影像", lng: 121.443545, lat: 31.21214, address: "上海市徐汇区淮海中路1413号", src: "./Data/video/上海徐汇艺术馆宣传视频 - 1.上海徐汇艺术馆宣传视频(Av839864062,P1).mp4", note: "艺术场馆影像节点。" },
+      { id: "huangxing_video", name: "黄兴旧居影像", lng: 121.43470, lat: 31.20790, address: "武康路393号", src: "./Data/video/黄兴旧居，徐汇区-武康路393号 - 1.studio_video_1702873627573.mp4(Av622443492,P1).mp4", note: "武康路历史建筑影像节点。" },
+    ];
+    function getVideoSpotForName(name) {
+      return videoSpots.find((v) => {
+        const videoName = v.name.replace("影像", "");
+        return v.name.includes(name) || name.includes(videoName);
+      }) || null;
+    }
     let checkinIndex = 0, checkinTimer = null;
     let viewer, baseLayer, historyLayer, charts = {}, routeEntities = [], heatEntities = [], tempEntities = [],
-      measurePts = [], drawMode = "", drawPreviewEntity = null, splitOpen = false, analysisMode = false, whiteMaskEnabled = false,
-      modelSelectMode = false, currentRightTab = "crowd", currentWeather = "clear";
-    const whiteShift = { lat: -0.00195, lng: 0.00463, height: 0 }, flyViewOffset = { lat: 0.00008, lng: 0 };
+      measurePts = [], drawMode = "", drawPreviewEntity = null, splitOpen = false, analysisMode = false,
+      modelSelectMode = false, currentRightTab = "crowd", currentWeather = "clear", poiCat = null;
+    const videoState = { source: null, entities: [], active: null };
+    const whiteShift = { lat: -0.00195, lng: 0.00463, height: 0 }, flyViewOffset = { lat: 0, lng: 0 };
     let activeFlash = null, activeHighlight = null,
       whiteDataFields = [], whiteRecords = [], whiteRecordsByUri = {}, whiteMetadataLoading = null,
       textureModelRecordCache = {}, whiteStats = {
@@ -139,6 +153,12 @@
     viewer.scene.globe.depthTestAgainstTerrain = true;
     const credit = viewer.cesiumWidget.creditContainer; if (credit) credit.style.display = "none";
     viewer.scene.debugShowFramesPerSecond = true;
+
+    // 禁用默认的右键缩放功能（老师方法：正向逻辑，只保留滚轮和双指缩放）
+    viewer.scene.screenSpaceCameraController.zoomEventTypes = [
+      Cesium.CameraEventType.WHEEL,
+      Cesium.CameraEventType.PINCH,
+    ];
 
     // 底图与导航
     viewer.imageryLayers.removeAll(); baseLayer = viewer.imageryLayers.addImageryProvider(
@@ -192,16 +212,16 @@
       }
       if (!xuhuiPOIItems.length) return status("POI点位尚未加载。");
       if (typeof CesiumHeatmap === "undefined") return status("POI热力插件未加载，请检查 CesiumHeatmap.js 路径。");
-      const heatItems = xuhuiPOIItems.filter(p => ["人文历史", "商业消费", "公园绿地"].includes(p.unifiedCat));
-      if (!heatItems.length) return status("三类POI点位尚未加载。");
+      const heatItems = xuhuiPOIItems.filter(p => ["人文历史", "商业消费", "公园绿地", "交通出行", "生活服务", "教育办公"].includes(p.unifiedCat));
+      if (!heatItems.length) return status("POI点位尚未加载。");
       const b = getPOIHeatBounds(heatItems), data = buildPOIHeatData(heatItems);
       poiHeatEntity = CesiumHeatmap.create(viewer, b, {
-        radius: 20, blur: .52, maxOpacity: .86, minOpacity: .08,
-        gradient: { ".05": "#2563eb", ".22": "#22c55e", ".80": "#facc15", ".90": "#f97316",  "1": "#7f1d1d" },
+        radius: 15, blur: .38, maxOpacity: .78, minOpacity: .03,
+        gradient: { ".02": "#1e3a5f", ".15": "#2563eb", ".30": "#22c55e", ".55": "#facc15", ".75": "#f97316", ".88": "#ef4444",  "1": "#7f1d1d" },
       });
       poiHeatEntity.setWGS84Data(0, 18, data);
       if (poiHeatEntity._layer) poiHeatEntity._layer.name = "POI密度热力图";
-      info("POI热力显示", `已基于人文历史、商业消费、公园绿地三类共${heatItems.length}个POI绘制热力。黄色、橙色和红色表示更高密度核心区。`);
+      info("POI热力显示", `已基于全部${heatItems.length}个POI绘制热力。深蓝为低密区，黄/橙/红为高密核心区。`);
       status("POI热力图已开启。");
     }
     function clearPOIHeatmap() {
@@ -214,16 +234,33 @@
       return { west: Math.min(...lngs) - pad, east: Math.max(...lngs) + pad, south: Math.min(...lats) - pad, north: Math.max(...lats) + pad };
     }
     function buildPOIHeatData(items) {
-      const weights = { "商业消费": 18, "人文历史": 14, "公园绿地": 10 };
+      const weights = { "商业消费": 20, "人文历史": 16, "公园绿地": 12, "交通出行": 8, "生活服务": 6, "教育办公": 6 };
       return items.map(p => ({ x: p.lng, y: p.lat, value: weights[p.unifiedCat] }));
     }
     function filterPOI(cat) {
       if (!xuhuiPOISource) return;
-      let count = 0; xuhuiPOISource.entities.values.forEach((e) => {
-        const itemCat = e.properties.unifiedCat ? e.properties.unifiedCat.getValue() : null;
-        const show = !cat || itemCat === cat; e.show = show; if (show) count++;
+      if (poiCat === cat) {
+        poiCat = null; xuhuiPOISource.entities.values.forEach((e) => (e.show = !0));
+        highlightPoiCategory(null);
+        info("全部", "已显示全部兴趣点。");
+      } else {
+        poiCat = cat; xuhuiPOISource.show = !0;
+        let count = 0; xuhuiPOISource.entities.values.forEach((e) => {
+          const itemCat = e.properties.unifiedCat ? e.properties.unifiedCat.getValue() : null;
+          const show = itemCat === cat; e.show = show; if (show) count++;
+        });
+        highlightPoiCategory(cat);
+        info(cat, `已筛选「${cat}」类别，共 ${count} 个点位。`);
+      }
+    }
+    function highlightPoiCategory(cat) {
+      document.querySelectorAll("#filters button").forEach((b) => {
+        if (b.textContent === cat) {
+          b.style.background = "rgba(59,130,246,0.3)"; b.style.borderColor = "#3b82f6";
+        } else {
+          b.style.background = ""; b.style.borderColor = "";
+        }
       });
-      info(cat || "全部", `已筛选「${cat || "全部"}」类别，共显示 ${count} 个点位。`);
     }
     function toggleXuhuiPOIs() {
       if (xuhuiPOISource) {
@@ -320,7 +357,7 @@
     }
     async function init() {
       await loadCrowdData(); buildUI(); await initPOIs();
-      await initXuhuiBoundary(); initKeyPhotoSpots(); bindPick(); bindPhotoHover(); bindDraw(); bindSplit(); bindCoordsUpdate(); drawCharts();
+      await initXuhuiBoundary(); initKeyPhotoSpots(); initVideoSpots(); bindPick(); bindPhotoHover(); bindDraw(); bindSplit(); bindCoordsUpdate(); drawCharts();
       focusScene(); status("系统已就绪。"); loadXuhuiLayers();
     }
     function initKeyPhotoSpots() {
@@ -328,6 +365,7 @@
       viewer.dataSources.add(keyPhotoSource);
       checkinSpots.forEach((s, i) => {
         const isCelebrity = s.tag === "名人故居";
+        const hasVideo = !!getVideoSpotForName(s.name);
         const entity = keyPhotoSource.entities.add({
           id: `key_photo_${i}`, name: s.name, position: Cesium.Cartesian3.fromDegrees(s.lng, s.lat, 35),
           properties: { name: s.name, category: isCelebrity ? "名人故居" : "关键照片节点", address: s.address, unifiedCat: "拍照打卡" },
@@ -336,18 +374,86 @@
             disableDepthTestDistance: Number.POSITIVE_INFINITY, distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 16000),
           },
           label: {
-            text: (isCelebrity ? "故居 " : "★ ") + s.name, font: "bold 13px Microsoft YaHei", fillColor: Cesium.Color.WHITE,
+            text: (isCelebrity ? "故居 " : "★ ") + s.name + (hasVideo ? "  有视频" : ""), font: "bold 13px Microsoft YaHei", fillColor: hasVideo ? C("#bfdbfe") : Cesium.Color.WHITE,
             outlineColor: Cesium.Color.BLACK, outlineWidth: 3, style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             pixelOffset: new Cesium.Cartesian2(0, -30), disableDepthTestDistance: Number.POSITIVE_INFINITY,
             distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 5000),
           },
         });
         entity.photoSpot = s;
+        entity.photoIndex = i;
       });
       renderCheckinCarousel();
       checkinTimer = setInterval(() => {
         checkinIndex = (checkinIndex + 1) % checkinSpots.length; renderCheckinCarousel();
       }, 4200);
+    }
+    function initVideoSpots() {
+      videoState.source = new Cesium.CustomDataSource("videoSpots");
+      viewer.dataSources.add(videoState.source);
+      videoSpots.forEach((s) => {
+        const video = document.createElement("video");
+        video.id = `${s.id}_element`;
+        video.src = s.src;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        video.style.display = "none";
+        document.body.appendChild(video);
+        video.load();
+        s.videoElement = video;
+
+        const wallWidth = 0.00052, wallHeight = 68, wallBottom = 18;
+        const wall = viewer.entities.add({
+          id: `${s.id}_wall`, name: `${s.name}视频墙`, show: true,
+          wall: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+              s.lng - wallWidth / 2, s.lat, wallHeight,
+              s.lng + wallWidth / 2, s.lat, wallHeight,
+            ]),
+            minimumHeights: [wallBottom, wallBottom],
+            material: video,
+            outline: true,
+            outlineColor: C("#38bdf8"),
+          },
+        });
+        wall.videoSpot = s;
+        s.wall = wall;
+        videoState.entities.push(wall);
+      });
+    }
+    function stopActiveVideo() {
+      if (!videoState.active) return;
+      const active = videoState.active;
+      if (active.videoElement) {
+        active.videoElement.pause();
+        active.videoElement.currentTime = 0;
+      }
+      videoState.active = null;
+    }
+    function playVideoSpot(spot, muted = true) {
+      if (!spot || !spot.videoElement) return;
+      if (videoState.active === spot && !spot.videoElement.paused) {
+        spot.videoElement.pause();
+        info(spot.name, `<div class="tag" style="background:#f87171">视频墙  已暂停</div><p>${spot.note}</p><p>再次点击可继续播放。</p><p class="mini">${spot.address}</p>`);
+        status(`视频已暂停：${spot.name}。`);
+        return;
+      }
+      if (videoState.active === spot && spot.videoElement.paused) {
+        spot.videoElement.muted = muted;
+        spot.videoElement.play();
+        info(spot.name, `<div class="tag" style="background:#38bdf8">视频墙  播放中</div><p>${spot.note}</p><p>${muted ? "默认静音" : "已开启声音"}。</p><p class="mini">${spot.address}</p>`);
+        status(`视频已继续播放：${spot.name}${muted ? "（默认静音）" : "（有声）"}。`);
+        return;
+      }
+      if (videoState.active && videoState.active !== spot) stopActiveVideo();
+      videoState.active = spot;
+      spot.videoElement.muted = muted;
+      const playResult = spot.videoElement.play();
+      playResult && playResult.catch && playResult.catch(() => status("浏览器阻止了自动播放，请再次点击视频节点。"));
+      info(spot.name, `<div class="tag" style="background:#38bdf8">视频墙  播放中</div><p>${spot.note}</p><p>${muted ? "默认静音" : "已开启声音"}。</p><p class="mini">${spot.address}</p>`);
+      status(`视频已开始播放：${spot.name}${muted ? "（默认静音）" : "（有声）"}。`);
     }
     function bindPhotoHover() {
       const card = document.querySelector(".photoPreview"), handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -361,8 +467,9 @@
       const s = entity.photoSpot, rect = viewer.container.getBoundingClientRect();
       if (activePhotoSpot && activePhotoSpot !== entity) activePhotoSpot.point.pixelSize = 18;
       activePhotoSpot = entity; entity.point.pixelSize = s.tag === "名人故居" ? 30 : 28;
+      const hasVideo = !!getVideoSpotForName(s.name);
       const media = s.photos && s.photos.length ? `<img src="${s.photos[0]}" alt="${s.name}">` : `<div class="checkinPlaceholder">故居</div>`;
-      card.innerHTML = `${media}<b>${s.name}</b><span>${s.tag || "关键节点"}${s.person ? "｜" + s.person : ""}<br>${s.address}<br>WGS84：${s.lng.toFixed(6)}, ${s.lat.toFixed(6)}</span>`;
+      card.innerHTML = `${media}<b>${s.name}${hasVideo ? "｜有视频" : ""}</b><span>${s.tag || "关键节点"}${s.person ? "｜" + s.person : ""}<br>${s.address}<br>WGS84：${s.lng.toFixed(6)}, ${s.lat.toFixed(6)}</span>`;
       card.style.left = Math.min(pos.x + 18, rect.width - 285) + "px";
       card.style.top = Math.max(80, Math.min(pos.y + 18, rect.height - 240)) + "px";
       card.style.display = "block";
@@ -374,14 +481,16 @@
     function renderCheckinCarousel() {
       const el = document.getElementById("checkinCarousel"); if (!el) return;
       const s = checkinSpots[checkinIndex % checkinSpots.length];
+      const hasVideo = !!getVideoSpotForName(s.name);
       const media = s.photos && s.photos.length ? `<img src="${s.photos[0]}" alt="${s.name}">` : `<div class="checkinPlaceholder">故居</div>`;
-      el.innerHTML = `${media}<div><b>${s.name}</b><span>${s.note}<br>${s.address}</span><div class="checkinTags"><em>${s.tag}</em>${s.person ? `<em>${s.person}</em>` : ""}<em>WGS84</em></div><button onclick="flyToCheckin(${checkinIndex % checkinSpots.length})">查看点位</button></div>`;
+      el.innerHTML = `${media}<div><b>${s.name}</b><span>${s.note}<br>${s.address}</span><div class="checkinTags"><em>${s.tag}</em>${s.person ? `<em>${s.person}</em>` : ""}${hasVideo ? "<em>有视频</em>" : ""}<em>WGS84</em></div><button onclick="flyToCheckin(${checkinIndex % checkinSpots.length})">查看点位</button></div>`;
     }
     function flyToCheckin(i) {
       const s = checkinSpots[i]; if (!s) return;
       checkinIndex = i; renderCheckinCarousel();
-      viewer.camera.flyTo({ destination: flyPoint(s.lng, s.lat, 1050), orientation: { heading: 0, pitch: Cesium.Math.toRadians(-82), roll: 0 } });
-      info(s.name, `${s.tag}${s.person ? "｜" + s.person : ""}<br>${s.note}<br>${s.address}<br>坐标：${s.lng.toFixed(6)}°E, ${s.lat.toFixed(6)}°N`);
+      const video = getVideoSpotForName(s.name);
+      viewer.camera.flyTo({ destination: Cesium.Cartesian3.fromDegrees(s.lng, s.lat, 1250), orientation: { heading: 0, pitch: Cesium.Math.toRadians(-89), roll: 0 }, duration: 1.2 });
+      info(s.name, `${s.tag}${s.person ? "｜" + s.person : ""}${video ? "｜有视频" : ""}<br>${s.note}<br>${s.address}<br>坐标：${s.lng.toFixed(6)}°E, ${s.lat.toFixed(6)}°N`);
       status(`已定位打卡推荐地：${s.name}`);
     }
     function buildUI() {
@@ -498,67 +607,6 @@
       }), status(`正在飞行至Excel采集点：${v[0]}｜${v[3]}`),
         info(v[0], `Excel采集点位：${v[3]}<br>坐标：${v[1].toFixed(6)}°E, ${v[2].toFixed(6)}°N`));
     }
-    function startClipPolygon() {
-      ((drawClipMode = true), (drawClipPoints = []), clearClipEntities(),
-        status("裁剪模式：在地球上依次点击顶点（至少3个），双击完成闭合。"));
-    }
-    function clearClipEntities() {
-      const existing = viewer.entities.getById("_clipOutline");
-      if (existing) viewer.entities.remove(existing);
-      drawClipPoints.forEach((_, i) => {
-        const e = viewer.entities.getById(`_clipPt${i}`);
-        if (e) viewer.entities.remove(e);
-      });
-    }
-    function finishClipPolygon() {
-      if (((drawClipMode = false), drawClipPoints.length < 3))
-        return (status("裁剪区需要至少3个顶点，已取消。"), void (drawClipPoints = []));
-      const degrees = [];
-      for (const p of drawClipPoints) {
-        const carto = Cesium.Cartographic.fromCartesian(p);
-        degrees.push(Cesium.Math.toDegrees(carto.longitude), Cesium.Math.toDegrees(carto.latitude));
-      }
-      ((clipPolygonDegrees = degrees), clearClipEntities(), applyWhiteCoverageMask(true));
-      const dataStr = JSON.stringify(degrees.map((v) => +v.toFixed(6)));
-      console.log("裁剪区坐标数据（保存备用）：\n" + dataStr);
-      status(`裁剪区已设定：${drawClipPoints.length}个顶点。`);
-    }
-    function cancelClipPolygon() {
-      ((drawClipMode = false), (clipPolygonDegrees = null), clearClipEntities(),
-        (drawClipPoints = []), applyWhiteCoverageMask(true), status("裁剪区已取消，已恢复默认隐藏范围。"));
-    }
-    function bindClipDraw() {
-      viewer.screenSpaceEventHandler.setInputAction((e) => {
-        if (!drawClipMode) return;
-        if (drawClipPoints.length >= 3) {
-          const first = drawClipPoints[0], pick = viewer.scene.pickPosition(e.position) ||
-            viewer.camera.pickEllipsoid(e.position, viewer.scene.globe.ellipsoid);
-          if (!pick) return;
-          if (Cesium.Cartesian3.distance(first, pick) < 50) return void finishClipPolygon();
-        }
-        const p = viewer.scene.pickPosition(e.position) ||
-          viewer.camera.pickEllipsoid(e.position, viewer.scene.globe.ellipsoid);
-        if (!p) return;
-        drawClipPoints.push(p);
-        const idx = drawClipPoints.length - 1;
-        viewer.entities.add({
-          id: `_clipPt${idx}`, position: p, point: {
-            pixelSize: 10, color: Cesium.Color.RED, outlineColor: Cesium.Color.WHITE, outlineWidth: 2,
-          }, label: {
-            text: idx === 0 ? "起" : `${idx}`, font: "12px Microsoft YaHei", fillColor: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.BLACK, outlineWidth: 2, style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-            pixelOffset: new Cesium.Cartesian2(0, -20),
-          },
-        });
-        status(`已点${idx + 1}个顶点，继续点击或靠近起点闭合。`);
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      viewer.screenSpaceEventHandler.setInputAction(() => {
-        if (drawClipMode) finishClipPolygon();
-      }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-      viewer.screenSpaceEventHandler.setInputAction(() => {
-        if (drawClipMode) cancelClipPolygon();
-      }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-    }
     function setMode(mode) {
       (document.querySelectorAll(".top .tab").forEach((b) => b.classList.toggle("active",
         b.textContent.includes({ explore: "自由", story: "故事", crowd: "人流", course: "课程" }[mode],),),),
@@ -581,7 +629,10 @@
           charts.route && charts.route.resize();
         }, 60));
     }
-    function setPanelState(id, open) { document.getElementById(id).classList.toggle("open", open); }
+    function setPanelState(id, open) {
+      document.getElementById(id).classList.toggle("open", open);
+      if (id === "modal" && !open) stopActiveVideo();
+    }
     function toggleFeature(key) {
       return "heat" === key ? toggleHeat() : "split" === key ? toggleSplit() : "night" === key
         ? setTimeSlot("night") : void 0;
@@ -637,6 +688,7 @@
       for (currentRouteKey = null, document.querySelectorAll("#right-route button")
         .forEach((b) => b.classList.remove("active")); routeEntities.length;) viewer.entities.remove(routeEntities.pop());
       xuhuiPOISource && xuhuiPOISource.entities.values.forEach((e) => (e.show = !0));
+      poiCat = null; highlightPoiCategory(null);
     }
     function toggleHeat() {
       if (heatEntities.length) {
@@ -687,7 +739,7 @@
         series: [
           { name: "推荐指数", data: vals.map((v) => v + Math.floor(10 * Math.random())) },
           { name: "拥挤风险", data: vals.slice().reverse() },],
-      }), applyAtmosphere(slot), renderCrowd(),
+      }), applyAtmosphere(slot), renderCrowd(), renderQuadrantChart(),
         heatEntities.length && (toggleHeat(), toggleHeat()), status(
           `已切换到${{ morning: "上午", noon: "午间", afternoon: "下午", evening: "傍晚", night: "夜间" }[slot] || slot}时段，场景氛围已同步更新。`,));
     }
@@ -783,6 +835,10 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
       new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas).setInputAction((e) => {
         if (drawMode) return;
         const hits = viewer.scene.drillPick(e.position, 5); if (hits.length) {
+          for (const p of hits)
+            if (Cesium.defined(p.id) && p.id.videoSpot) { playVideoSpot(p.id.videoSpot); return; }
+          for (const p of hits)
+            if (Cesium.defined(p.id) && p.id.photoSpot) return flyToCheckin(p.id.photoIndex);
           for (const p of hits)
             if (Cesium.defined(p.id) && p.id.properties) {
               const entity = p.id, props = entity.properties, name = props.name ? props.name.getValue() : "未知点位",
@@ -1255,7 +1311,7 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
     }
     function setBuildingMode() {
       const texture = loadedTilesets.buildings, white = loadedTilesets.whiteBuildings; (texture && (texture.show = !0),
-        white && ((white.show = !1), applyWhiteCoverageMask(!0),
+        white && ((white.show = !1),
           (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" }))), updateWhiteStats(),
         (document.getElementById("sceneState").textContent = "浏览模式｜仅显示纹理建筑"));
     }
@@ -1462,7 +1518,7 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
           if (((btn.style.background = "rgba(239,68,68,.14)"),
             (btn.style.borderColor = "rgba(239,68,68,.45)"), (btn.style.color = "#f87171"), (btn.textContent = "📐 模型选择·开"),
             texture && (texture.show = !1), white)) {
-              ((white.show = !0), applyWhiteCoverageMask(!1),
+              ((white.show = !0),
                 (white.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE),
                 (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#f8fafc', 1.0)" })));
             const select = document.getElementById("modelMetricSelect"); select && (select.value = "none");
@@ -1473,24 +1529,77 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
         ((btn.style.background = "rgba(34,197,94,.12)"), (btn.style.borderColor = "rgba(34,197,94,.35)"),
           (btn.style.color = "#4ade80"), (btn.textContent = "📐 模型选择"), (_lastBuildingTab = !1), texture && (texture.show = !0),
           white && ((white.show = !1), (white.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE),
-            (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" })), applyWhiteCoverageMask(!0)),
+            (white.style = new Cesium.Cesium3DTileStyle({ color: "color('#94a3b8',0.85)" }))),
           "building" === currentRightTab && rightTab("crowd"), status("浏览模式：仅显示纹理建筑。点击「模型选择」切换数据查询。"));
     }
     function openMedia(type) {
+      if (type === "video") {
+        const media = document.getElementById("modalMedia");
+        document.getElementById("modalTitle").textContent = "视频节点";
+        document.getElementById("modalText").textContent = "选择一个已下载视频，系统会以有声方式播放对应场地视频墙，不移动当前镜头。";
+        media.innerHTML = `<div style="width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px;">${videoSpots.map((v, i) => `<button onclick="playVideoFromPanel(${i})" style="height:auto;min-height:58px;text-align:left;line-height:1.45;"><b>${v.name}</b><br><span class="mini">${v.address}</span></button>`).join("")}</div>`;
+        return setPanelState("modal", !0);
+      }
       const item = contentLibrary[type] || contentLibrary.pano, media = document.getElementById("modalMedia");
       ((document.getElementById("modalTitle").textContent = item.title),
         (document.getElementById("modalText").textContent = item.text),
         (media.innerHTML = `<img src="${item.media}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`),
         setPanelState("modal", !0));
     }
+    function playVideoFromPanel(i) {
+      setPanelState("modal", !1);
+      playVideoSpot(videoSpots[i], false);
+    }
     function exportReport() {
       ((document.getElementById("modalTitle").textContent = "汇报模式"),
         (document.getElementById("modalMedia").innerHTML = "系统汇报摘要"), (document.getElementById("modalText").textContent =
           "已汇总当前图层、路线、人流、故事和空间工具状态，可作为课堂演示的系统讲解摘要。"), setPanelState("modal", !0));
     }
+    function computeQuadrantData() {
+      if (!xuhuiPOIItems.length || !crowdRegions.length) return [];
+      const regions = crowdRegions.map(r => {
+        const rLng = r.center.lng, rLat = r.center.lat, radius = r.radiusMeters || 720;
+        const cosLat = Math.cos(rLat * Math.PI / 180);
+        let poiCount = 0;
+        for (const p of xuhuiPOIItems) {
+          const dx = (p.lng - rLng) * 111320 * cosLat, dy = (p.lat - rLat) * 111320;
+          if (Math.sqrt(dx * dx + dy * dy) <= radius) poiCount++;
+        }
+        const intensity = Number(r.slots?.[currentCrowdSlot] ?? r.slots?.evening ?? 0);
+        return { name: r.name, lng: rLng, lat: rLat, poiCount, intensity, category: r.category };
+      });
+      if (!regions.length) return [];
+      const N = regions.length;
+      // 使用排名百分位（percentile rank）替代线性归一化，确保散点均匀分布
+      const poiVals = regions.map(r => r.poiCount), crowdVals = regions.map(r => r.intensity);
+      // 计算每个值的排名（从小到大，重复值取平均排名）
+      const rank = (arr) => {
+        const indexed = arr.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+        const ranks = new Array(N);
+        for (let i = 0; i < N;) {
+          let j = i;
+          while (j < N && indexed[j].v === indexed[i].v) j++;
+          const avgRank = (i + j - 1) / 2 + 1; // 平均排名 1-based
+          for (let k = i; k < j; k++) ranks[indexed[k].i] = avgRank;
+          i = j;
+        }
+        return ranks;
+      };
+      const poiRanks = rank(poiVals), crowdRanks = rank(crowdVals);
+      // 转换为 0-100 的百分位分数
+      const poiScores = poiRanks.map(r => Math.round((r / N) * 100));
+      const crowdScores = crowdRanks.map(r => Math.round((r / N) * 100));
+      // 用百分位分数的中位数作为象限分割阈值（使四个象限大致均分）
+      const midPoi = 50, midCrowd = 50;
+      return regions.map((r, i) => {
+        const poiScore = poiScores[i], crowdScore = crowdScores[i];
+        const q = poiScore >= midPoi ? (crowdScore >= midCrowd ? "热门" : "小众宝藏") : (crowdScore >= midCrowd ? "热门通道" : "冷门");
+        return { ...r, poiScore, crowdScore, quadrant: q, avgPoi: 50, avgCrowd: 50 };
+      });
+    }
     function drawCharts() {
       const el = document.getElementById("chart"); (el && ((charts.route = echarts.init(el)), updateCharts("classic")),
-        renderWhiteStatsChart(), window.addEventListener("resize", () => Object.values(charts).forEach((c) => c.resize()),));
+        renderWhiteStatsChart(), renderQuadrantChart(), window.addEventListener("resize", () => Object.values(charts).forEach((c) => c.resize()),));
     }
     function updateCharts(key) {
       if (!charts.route) return;
@@ -1511,6 +1620,102 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
         },],
       });
     }
+    function renderQuadrantChart() {
+      const data = computeQuadrantData();
+      if (!data.length) return;
+      const quadColors = { "热门": "#ef4444", "小众宝藏": "#22c55e", "热门通道": "#f97316", "冷门": "#94a3b8" };
+      const Q = document.getElementById("quadrantChart");
+      if (!Q) return;
+      if (!charts.quadrant) charts.quadrant = echarts.init(Q);
+      // 每象限只取Top1用于标注
+      const top1 = {};
+      data.forEach(d => {
+        if (!top1[d.quadrant] || d.poiScore > top1[d.quadrant].poiScore) top1[d.quadrant] = d;
+      });
+      charts.quadrant.setOption({
+        animation: false,
+        tooltip: {
+          formatter: p => {
+            const d = data.find(x => x.name === p.name);
+            if (!d) return p.name;
+            return `<b>${d.name}</b><br/>POI：<b>${d.poiCount}个</b>｜人流：<b>${d.intensity}人次</b><br/>象限：<span style="color:${quadColors[d.quadrant]}">${d.quadrant}</span>`;
+          },
+          backgroundColor: "rgba(15,23,42,0.94)", borderColor: "rgba(56,189,248,0.36)", textStyle: { color: "#e2e8f0" },
+        },
+        grid: { top: 10, bottom: 36, left: 48, right: 16 },
+        xAxis: {
+          min: 0, max: 100,
+          axisLabel: { fontSize: 9, color: "#64748b" }, splitLine: { show: false },
+          axisLine: { lineStyle: { color: "rgba(148,163,184,.25)" } }, axisTick: { show: false },
+        },
+        yAxis: {
+          min: 0, max: 100,
+          axisLabel: { fontSize: 9, color: "#64748b" }, splitLine: { show: false },
+          axisLine: { lineStyle: { color: "rgba(148,163,184,.25)" } }, axisTick: { show: false },
+        },
+        series: [{
+          type: "scatter",
+          symbolSize: d => Math.max(16, Math.min(32, 12 + d[2] * 1.8)),
+          data: data.map(d => ({
+            name: d.name, value: [d.poiScore, d.crowdScore, d.poiCount],
+            itemStyle: { color: quadColors[d.quadrant], shadowBlur: 6, shadowColor: quadColors[d.quadrant] },
+            label: {
+              show: d.name === top1[d.quadrant]?.name,
+              formatter: p => p.name.length > 5 ? p.name.slice(0, 5) + ".." : p.name,
+              position: "top", fontSize: 9, color: "#f1f5f9", distance: 4,
+              textBorderColor: "rgba(5,10,24,0.9)", textBorderWidth: 2,
+            },
+          })),
+          markArea: {
+            silent: true,
+            data: [
+              [{ xAxis: 50, yAxis: 50 }, { xAxis: 100, yAxis: 100 }],
+              [{ xAxis: 50, yAxis: 0 }, { xAxis: 100, yAxis: 50 }],
+              [{ xAxis: 0, yAxis: 50 }, { xAxis: 50, yAxis: 100 }],
+              [{ xAxis: 0, yAxis: 0 }, { xAxis: 50, yAxis: 50 }],
+            ],
+            itemStyle: { color: (p) => ["rgba(239,68,68,0.18)","rgba(34,197,94,0.18)","rgba(249,115,22,0.14)","rgba(148,163,184,0.10)"][p.dataIndex] },
+          },
+          markLine: {
+            silent: true, symbol: "none", label: { show: false },
+            lineStyle: { color: "rgba(241,245,249,0.5)", type: "dashed", width: 1.5 },
+            data: [{ xAxis: 50 }, { yAxis: 50 }],
+          },
+          markPoint: {
+            silent: true, symbol: "none",
+            data: [
+              { coord: [82, 82], label: { show: true, formatter: "🔥热门", color: "#fca5a5", fontSize: 10, fontWeight: "bold", distance: 0 } },
+              { coord: [82, 18], label: { show: true, formatter: "💎宝藏", color: "#86efac", fontSize: 10, fontWeight: "bold", distance: 0 } },
+              { coord: [18, 82], label: { show: true, formatter: "🚶通道", color: "#fdba74", fontSize: 10, fontWeight: "bold", distance: 0 } },
+              { coord: [18, 18], label: { show: true, formatter: "🌿冷门", color: "#cbd5e1", fontSize: 10, fontWeight: "bold", distance: 0 } },
+            ],
+          },
+        }],
+      }, true);
+      generateQuadrantRecommendations(data);
+    }
+    function generateQuadrantRecommendations(data) {
+      const hot = data.filter(d => d.quadrant === "热门").sort((a, b) => b.poiScore - a.poiScore).slice(0, 2);
+      const treasure = data.filter(d => d.quadrant === "小众宝藏").sort((a, b) => b.poiScore - a.poiScore).slice(0, 2);
+      const shortName = (name) => name.length > 6 ? name.slice(0, 6) + "…" : name;
+      const el = document.getElementById("quadrantRecs");
+      if (el) {
+        const hotText = hot.map(d => `<span style="color:#fecaca">${d.name}</span>`).join(" / ") || "暂无";
+        const treasureText = treasure.map(d => `<span style="color:#bbf7d0">${d.name}</span>`).join(" / ") || "暂无";
+        el.innerHTML = `<div style="display:grid;gap:7px;">
+          <div style="border-left:3px solid #ef4444;padding-left:8px;"><p style="margin:0;color:#fca5a5;font-weight:bold;font-size:12px;">热门Citywalk</p><p class="mini" style="margin:2px 0 0;line-height:1.55;">${hotText}</p></div>
+          <div style="border-left:3px solid #22c55e;padding-left:8px;"><p style="margin:0;color:#86efac;font-weight:bold;font-size:12px;">小众宝藏路线</p><p class="mini" style="margin:2px 0 0;line-height:1.55;">${treasureText}</p></div>
+        </div>`;
+      }
+      const topBar = document.getElementById("topHotBar");
+      if (topBar) {
+        const chips = [];
+        if (hot[0]) chips.push(`<span class="hot-chip" title="热门Citywalk：${hot[0].name}" onclick="flyTo({lng:${hot[0].lng},lat:${hot[0].lat}});status('热门Citywalk：${hot[0].name}')">热·${shortName(hot[0].name)}</span>`);
+        if (treasure[0]) chips.push(`<span class="hot-chip green" title="小众宝藏：${treasure[0].name}" onclick="flyTo({lng:${treasure[0].lng},lat:${treasure[0].lat}});status('小众宝藏：${treasure[0].name}')">宝·${shortName(treasure[0].name)}</span>`);
+        topBar.style.display = chips.length ? "flex" : "none";
+        topBar.innerHTML = chips.length ? `<span class="hot-label">推荐</span>${chips.join("")}` : "";
+      }
+    }
     function flyTo(n) {
       viewer.camera.flyTo({
         destination: flyPoint(n.lng, n.lat, 1100),
@@ -1530,12 +1735,12 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
       ((drawMode = ""), (measurePts = []), status("临时图形已清除。"));
     }
     function resetSystem() {
-      clearWeather();
-      cancelClipPolygon();
+      clearWeather(); stopActiveVideo();
       (clearRoutes(), clearTemp(), heatEntities.length && toggleHeat(), splitOpen && toggleSplit(),
         poiHeatEntity && clearPOIHeatmap(),
         setBuildingMode(), modelSelectMode && toggleModelSelectMode(),
         xuhuiPOISource && ((xuhuiPOISource.show = !0), xuhuiPOISource.entities.values.forEach((e) => (e.show = !0))),
+        (poiCat = null), highlightPoiCategory(null),
         setPanelState("drawer", !1), setPanelState("storyCard", !1), setPanelState("modal", !1), focusScene(),
         status("系统已恢复开放探索默认状态。"));
     }
@@ -1548,21 +1753,6 @@ ${c[0]} ${formatPeople(c[4]?.count)} <span class="mini">${c[4]?.category || ""}<
     function status(text) {
       text !== _lastStatusText &&
       ((_lastStatusText = text), (document.getElementById("status").textContent = text));
-    }
-    function applyWhiteCoverageMask(enable = true) {
-      whiteMaskEnabled = enable;
-      const white = loadedTilesets.whiteBuildings;
-      if (!white) return;
-      if (white.clippingPolygons) {
-        try { white.clippingPolygons.destroy(); } catch (e) {}
-        white.clippingPolygons = null;
-      }
-      if (!enable || !clipPolygonDegrees || clipPolygonDegrees.length < 6) return;
-      const positions = Cesium.Cartesian3.fromDegreesArray(clipPolygonDegrees);
-      white.clippingPolygons = new Cesium.ClippingPolygonCollection({
-        polygons: [new Cesium.ClippingPolygon({ positions })],
-        inverse: false,
-      });
     }
     init();
 
